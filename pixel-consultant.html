@@ -211,12 +211,116 @@ function clearStage() {
   rect(0, 0, W, H, PAL.wall);
 }
 
-// Quick sanity check
+// 5 stations along the lower walking lane (y=200)
+const STATIONS = {
+  inbox: { x: 60,  y: 200, label: "INBOX" },
+  skill: { x: 140, y: 200, label: "SKILL" },
+  mcp:   { x: 220, y: 200, label: "MCP" },
+  build: { x: 300, y: 200, label: "BUILD" },
+  qa:    { x: 400, y: 200, label: "QA" },
+};
+
+function drawOffice() {
+  // Wall (top 60% darker)
+  rect(0, 0, W, 160, PAL.wall);
+  // Floor: alternating tiles
+  for (let ty = 160; ty < H; ty += 16) {
+    for (let tx = 0; tx < W; tx += 24) {
+      const c = ((tx / 24 + ty / 16) | 0) % 2 === 0 ? PAL.floor : PAL.floor2;
+      rect(tx, ty, 24, 16, c);
+    }
+  }
+
+  // Wall trim
+  rect(0, 158, W, 2, PAL.brandD);
+
+  // INBOX: mailbox/desk with envelope on top
+  drawDeskWithItem(STATIONS.inbox.x, STATIONS.inbox.y, "envelope");
+  // SKILL: open book on a podium
+  drawDeskWithItem(STATIONS.skill.x, STATIONS.skill.y, "book");
+  // MCP: server rack
+  drawServerRack(STATIONS.mcp.x, STATIONS.mcp.y);
+  // BUILD: workstation/easel
+  drawDeskWithItem(STATIONS.build.x, STATIONS.build.y, "monitor");
+  // QA: clipboard stand
+  drawDeskWithItem(STATIONS.qa.x, STATIONS.qa.y, "clipboard");
+
+  // Big wall board (slide canvas) above BUILD station
+  drawWallBoard(280, 50, 160, 90);
+
+  // Station labels (pills below each station)
+  for (const s of Object.values(STATIONS)) {
+    drawLabel(s.label, s.x, s.y + 18);
+  }
+}
+
+function drawDeskWithItem(cx, cy, item) {
+  // Desk: 30 wide, 16 tall, sitting BELOW agent feet (cy is feet)
+  const dx = cx - 15, dy = cy - 28;
+  rect(dx, dy + 14, 30, 6, PAL.furniture);     // desk top
+  rect(dx + 2, dy + 20, 4, 8, PAL.furniture2); // left leg
+  rect(dx + 24, dy + 20, 4, 8, PAL.furniture2);// right leg
+  rect(dx, dy + 14, 30, 1, PAL.highlight);     // edge highlight
+
+  // Item on top
+  if (item === "envelope") {
+    rect(dx + 8, dy + 8, 14, 8, PAL.paper);
+    box(dx + 8, dy + 8, 14, 8, null, PAL.grey);
+    // envelope flap
+    px(dx + 14, dy + 11, PAL.grey);
+    px(dx + 15, dy + 12, PAL.grey);
+    px(dx + 16, dy + 11, PAL.grey);
+  } else if (item === "book") {
+    rect(dx + 6, dy + 6, 18, 10, PAL.paper);
+    rect(dx + 14, dy + 6, 2, 10, PAL.grey); // spine
+    // text lines
+    rect(dx + 8, dy + 9, 4, 1, PAL.grey);
+    rect(dx + 8, dy + 11, 5, 1, PAL.grey);
+    rect(dx + 17, dy + 9, 5, 1, PAL.grey);
+    rect(dx + 17, dy + 11, 4, 1, PAL.grey);
+  } else if (item === "monitor") {
+    rect(dx + 8, dy + 2, 14, 12, PAL.furniture2);
+    rect(dx + 9, dy + 3, 12, 10, PAL.brandD);
+    px(dx + 14, dy + 14, PAL.furniture2);
+    px(dx + 15, dy + 14, PAL.furniture2);
+  } else if (item === "clipboard") {
+    rect(dx + 9, dy + 4, 12, 12, PAL.paper);
+    rect(dx + 13, dy + 2, 4, 4, PAL.grey); // clip
+    rect(dx + 11, dy + 8, 8, 1, PAL.grey);
+    rect(dx + 11, dy + 10, 6, 1, PAL.grey);
+    rect(dx + 11, dy + 12, 8, 1, PAL.grey);
+  }
+}
+
+function drawServerRack(cx, cy) {
+  const dx = cx - 14, dy = cy - 32;
+  rect(dx, dy, 28, 28, PAL.furniture2);
+  box(dx, dy, 28, 28, null, PAL.highlight);
+  // 4 server units with status LEDs
+  for (let i = 0; i < 4; i++) {
+    const sy = dy + 2 + i * 6;
+    rect(dx + 2, sy, 24, 5, PAL.furniture);
+    rect(dx + 4, sy + 1, 2, 1, PAL.brand);  // led
+    rect(dx + 8, sy + 2, 14, 1, PAL.grey);  // slot
+  }
+}
+
+function drawWallBoard(x, y, w, h) {
+  // Frame
+  box(x - 2, y - 2, w + 4, h + 4, PAL.furniture, PAL.highlight);
+  // Empty whiteboard (slide canvas) — paper white
+  rect(x, y, w, h, PAL.paper);
+}
+
+function drawLabel(s, cx, y) {
+  ctx.font = '6px "SF Mono", Menlo, monospace';
+  const w = ctx.measureText(s).width + 6;
+  rect((cx - w / 2) | 0, y, w, 8, PAL.furniture2);
+  textCenter(s, cx, y + 1, PAL.highlight, 6);
+}
+
 clearStage();
-text("primitives loaded", 8, 8, PAL.white, 8);
-rect(8, 24, 60, 4, PAL.brand);
-box(80, 20, 40, 12, PAL.furniture, PAL.highlight);
-textCenter("HELLO", 100, 22, PAL.white, 6);
+drawOffice();
 </script>
 </body>
 </html>

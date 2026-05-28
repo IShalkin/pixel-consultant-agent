@@ -481,48 +481,66 @@ const SLIDE_BOX = { x: 280, y: 50, w: 160, h: 90 };
 
 function drawSlideLayers() {
   const { x, y, w, h } = SLIDE_BOX;
+  const skillOn = toggles.skill;
+  const mcpOn = toggles.mcp;
 
-  // Layer order: bg, gt, logo, title, chart, callout
   if (slide.layers.has("bg")) {
     rect(x, y, w, h, PAL.paper);
-    // Subtle gradient bar at top
-    rect(x, y, w, 4, PAL.brandD);
-    rect(x, y + 4, w, 1, PAL.brandM);
+    if (skillOn) {
+      rect(x, y, w, 4, PAL.brandD);
+      rect(x, y + 4, w, 1, PAL.brandM);
+    } else {
+      // Off-brand blue
+      rect(x, y, w, 4, "#224BFF");
+    }
   }
-  if (slide.layers.has("gt")) {
-    // » mark in top-right (Accenture brand element)
+  if (slide.layers.has("gt") && skillOn) {
     text(">", x + w - 10, y + 6, PAL.brand, 8);
   }
   if (slide.layers.has("logo")) {
-    // Pixel logo: 4 vertical bars + accent
-    rect(x + 6, y + 8, 2, 6, PAL.brand);
-    rect(x + 9, y + 8, 2, 6, PAL.brand);
-    rect(x + 12, y + 8, 2, 6, PAL.brand);
-    rect(x + 15, y + 8, 2, 6, PAL.brand);
-    rect(x + 6, y + 14, 11, 1, PAL.brand);
+    if (mcpOn) {
+      rect(x + 6, y + 8, 2, 6, PAL.brand);
+      rect(x + 9, y + 8, 2, 6, PAL.brand);
+      rect(x + 12, y + 8, 2, 6, PAL.brand);
+      rect(x + 15, y + 8, 2, 6, PAL.brand);
+      rect(x + 6, y + 14, 11, 1, PAL.brand);
+    } else {
+      // Missing asset placeholder
+      box(x + 4, y + 6, 16, 10, "#eee", PAL.grey);
+      text("?", x + 10, y + 7, PAL.grey, 8);
+    }
   }
   if (slide.layers.has("title")) {
-    text("Cloud strategy 2026", x + 6, y + 22, PAL.wall, 7);
-    rect(x + 6, y + 32, 30, 1, PAL.brand);
+    if (skillOn) {
+      text("Cloud strategy 2026", x + 6, y + 22, PAL.wall, 7);
+      rect(x + 6, y + 32, 30, 1, PAL.brand);
+    } else {
+      // ALL CAPS, smaller, off-brand color
+      text("CLOUD STRATEGY 2026", x + 6, y + 22, "#224BFF", 5);
+    }
   }
   if (slide.layers.has("chart")) {
-    // 4 bars descending
     const bx = x + 8, by = y + 42;
     const heights = [28, 22, 16, 10];
+    const barC = skillOn ? PAL.brand : "#224BFF";
     for (let i = 0; i < 4; i++) {
-      rect(bx + i * 12, by + 28 - heights[i], 8, heights[i], PAL.brand);
+      rect(bx + i * 12, by + 28 - heights[i], 8, heights[i], barC);
     }
-    // axis
     rect(bx, by + 28, 56, 1, PAL.grey);
   }
   if (slide.layers.has("callout")) {
-    // Highlight box top-right
-    rect(x + w - 60, y + 50, 54, 22, PAL.brand);
-    text("60% cost cut", x + w - 56, y + 54, PAL.white, 6);
-    text("over 18 months",  x + w - 56, y + 62, PAL.white, 6);
+    if (skillOn) {
+      rect(x + w - 60, y + 50, 54, 22, PAL.brand);
+      text("60% cost cut", x + w - 56, y + 54, PAL.white, 6);
+      text("over 18 months",  x + w - 56, y + 62, PAL.white, 6);
+    } else {
+      // No fill, plain black text — looks generic
+      box(x + w - 60, y + 50, 54, 22, null, PAL.grey);
+      text("60% cost cut",   x + w - 56, y + 54, PAL.wall, 5);
+      text("over 18 months", x + w - 56, y + 62, PAL.wall, 5);
+    }
   }
 
-  // QA annotations: red circles + labels
   for (const a of slide.qaAnnotations) {
     drawQACircle(a);
   }

@@ -1,111 +1,556 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pixel Consultant Agent</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pixel Consultant · accenture-pptx</title>
 <style>
-:root {
-  --bg:        #1a1428;
-  --panel:     #241a3b;
-  --border:    #3a2960;
-  --fg:        #f1f1ef;
-  --fg-2:      #cfcfcf;
-  --fg-3:      #818180;
-  --purple:    #A100FF;
-  --purple-d:  #460073;
-  --purple-m:  #7500C0;
-  --pink:      #FF50A0;
-  --green:     #2E7D32;
-  --red:       #D32F2F;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body {
-  background: var(--bg);
-  color: var(--fg);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  font-size: 15px;
-  line-height: 1.5;
-  min-height: 100vh;
-}
-.wrap { max-width: 1100px; margin: 0 auto; padding: 32px 24px 64px; }
-h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
-.sub { color: var(--fg-2); margin-bottom: 24px; }
-.layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
-.rail .panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 14px 16px;
-  margin-bottom: 14px;
-}
-.panel h3 {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--fg-3);
-  margin-bottom: 10px;
-}
-.toggle-row { display: flex; gap: 8px; align-items: center; padding: 4px 0; font-size: 14px; }
-.stage-wrap {
-  background: #0e0820;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 8px;
-  display: inline-block;
-}
-canvas {
-  display: block;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-  width: 960px;
-  height: 560px;
-}
-.controls { margin-top: 12px; display: flex; gap: 10px; }
-button {
-  background: var(--purple);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-size: 14px;
-  cursor: pointer;
-  font-weight: 600;
-}
-button.ghost { background: transparent; color: var(--fg-2); border: 1px solid var(--border); }
-button:hover { opacity: 0.85; }
-.log {
-  margin-top: 12px;
-  font-family: "SF Mono", Menlo, monospace;
-  font-size: 12px;
-  color: var(--fg-2);
-  background: #0e0820;
-  border: 1px solid var(--border);
-  padding: 10px 14px;
-  border-radius: 4px;
-  height: 120px;
-  overflow-y: auto;
-}
-.log .line { margin: 2px 0; }
-.log .line.brief  { color: #FF50A0; }
-.log .line.skill  { color: #C2A3FF; }
-.log .line.mcp    { color: #5bc0eb; }
-.log .line.build  { color: #ffd166; }
-.log .line.qa     { color: #4dd072; }
-.log .line.bad    { color: #ff5252; }
-@media (max-width: 800px) {
-  .layout { grid-template-columns: 1fr; }
-  canvas { max-width: 100%; height: auto; }
-}
+  :root {
+    --cream: #fdfaf5;
+    --fg: #1a1814;
+    --accent: #A100FF;
+    --acc-deep: #460073;
+    --acc-soft: #f3e6ff;
+    --muted: #818180;
+    --border: #e8e1d4;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --serif: "Instrument Serif", Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--cream); color: var(--fg);
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif; }
+  body { min-height: 100vh; padding: 20px; }
+  .wrap { max-width: 1440px; margin: 0 auto; }
+  h1 { font-family: var(--serif); font-weight: 400; font-size: 36px; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 18px; }
+  .layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
+  .rail { display: flex; flex-direction: column; gap: 14px; }
+  .panel { background: #faf3ff; border: 1px solid var(--border); border-radius: 4px; padding: 14px; }
+  .panel h3 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--muted); font-weight: 600; }
+  .scenarios button {
+    display: block; width: 100%; text-align: left; padding: 8px 10px; margin-bottom: 6px;
+    background: var(--cream); border: 1px solid var(--border); border-radius: 3px;
+    font-size: 13px; cursor: pointer; font-family: inherit;
+  }
+  .scenarios button.active { background: var(--accent); color: var(--cream); border-color: var(--accent); }
+  .scenarios button:hover:not(.active) { border-color: var(--accent); }
+  .toggle-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 12px; }
+  .toggle-row label { flex: 1; cursor: pointer; }
+  .toggle-row input[type="checkbox"] { accent-color: var(--accent); cursor: pointer; }
+  .stage-wrap { background: transparent; padding: 0; }
+  .stage-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    gap: 14px;
+    align-items: stretch;
+  }
+  .stage-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  @media (max-width: 980px) {
+    .stage-row { grid-template-columns: 1fr; }
+  }
+  canvas#stage { display: block; image-rendering: pixelated; image-rendering: crisp-edges;
+    width: 100%; height: auto; background: transparent; }
+  .log {
+    background: #1a1814; color: #e8d8b8; padding: 12px;
+    font-family: var(--mono); font-size: 11px; border-radius: 4px;
+    height: 140px; overflow-y: auto;
+  }
+  .log .line { padding: 2px 0; }
+  .log .line.warn { color: #f4c674; }
+  .log .line.fail { color: #f4847a; }
+  .log .line.ok { color: #92d18a; }
+  .log .line.skill { color: #b39df0; }
+  .controls { display: flex; gap: 8px; margin-top: 12px; }
+  .controls button {
+    background: var(--accent); color: var(--cream); border: none; padding: 8px 16px;
+    border-radius: 3px; cursor: pointer; font-family: inherit; font-size: 13px;
+  }
+  .controls button.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+  .controls button:disabled { opacity: 0.5; cursor: default; }
+  .credit { font-size: 11px; color: var(--muted); margin-top: 12px; text-align: center; }
+  .credit a { color: var(--muted); }
+
+  /* ── Full dashboard (the "this is what you'll build" payoff) ── */
+  .full-dashboard {
+    margin-top: 14px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 22px 24px 18px;
+    transition: opacity 300ms ease;
+  }
+  .full-dashboard.hidden { display: none; }
+  .full-dashboard.warn { border-color: #d8a93a; }
+  .full-dashboard.fail { border-color: #7a3030; }
+  .dash-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+  .dash-title { font-family: var(--serif); font-weight: 400; font-size: 24px; margin: 0; }
+  .dash-meta { display: flex; gap: 10px; align-items: baseline; }
+  .dash-source { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .dash-tag {
+    font-family: var(--mono); font-size: 11px; padding: 2px 8px;
+    background: #eaf6e6; color: #2a5a2a; border-radius: 99px; border: 1px solid #b6dab1;
+  }
+  .full-dashboard.warn .dash-tag { background: #fdf2d4; color: #7a5a10; border-color: #e8c87a; }
+  .full-dashboard.fail .dash-tag { background: #fbe6e1; color: #7a3030; border-color: #d4452f; }
+  .dash-bars { display: flex; flex-direction: column; gap: 8px; }
+  .dash-bar-row { display: grid; grid-template-columns: 110px 1fr 70px; align-items: center; gap: 12px; font-size: 13px; }
+  .dash-bar-row .country { font-weight: 600; }
+  .dash-bar-row .bar-track { background: var(--border); border-radius: 4px; height: 18px; overflow: hidden; }
+  .dash-bar-row .bar-fill {
+    height: 100%; background: var(--accent);
+    transform-origin: left center;
+    animation: dash-bar-grow 700ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+  .full-dashboard.warn .bar-fill { background: #d8a93a; }
+  .full-dashboard.fail .bar-fill { background: #7a3030; }
+  .dash-bar-row .value { font-family: var(--mono); font-size: 12px; color: var(--muted); text-align: right; }
+  .dash-bar-row.dup .country { color: #7a3030; font-weight: 500; }
+  .dash-bar-row.dup .bar-fill { background: repeating-linear-gradient(45deg, #d4452f, #d4452f 4px, #f4847a 4px, #f4847a 8px) !important; }
+  .dup-tag {
+    font-style: normal; font-family: var(--mono); font-size: 10px;
+    background: #fbe6e1; color: #7a3030; border: 1px solid #d4452f;
+    border-radius: 99px; padding: 1px 6px; margin-left: 6px; vertical-align: middle;
+  }
+  @keyframes dash-bar-grow {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+  .dash-foot {
+    margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--muted);
+  }
+
+  /* Hero slide preview rendered inside the post-run dashboard panel. */
+  .hero-slide {
+    position: relative; width: 100%; aspect-ratio: 16/9;
+    background: #ffffff;
+    border: 1px solid var(--border); border-radius: 4px;
+    box-shadow: 0 4px 16px rgba(70,0,115,0.12);
+    overflow: hidden;
+    font-family: 'Helvetica Neue', Arial, sans-serif; color: #0a0a0a;
+  }
+  .hero-slide .hs-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg,#ffffff 0%,#ffffff 70%,#f3e6ff 100%);
+  }
+  .hero-slide .hs-bg::before {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0;
+    height: 4%; background: linear-gradient(90deg,#A100FF 0%,#7500C0 60%,#460073 100%);
+  }
+  .hero-slide .hs-gt {
+    position: absolute; top: 4%; right: 3%;
+    font-size: 56px; font-weight: 800; color: #A100FF; line-height: 1;
+  }
+  .hero-slide .hs-logo {
+    position: absolute; top: 5%; left: 3%;
+    font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #0a0a0a;
+  }
+  .hero-slide .hs-title {
+    position: absolute; top: 16%; left: 3%; right: 28%;
+    font-size: 44px; font-weight: 600; letter-spacing: -0.01em;
+    color: #0a0a0a; line-height: 1.1;
+  }
+  .hero-slide .hs-chart {
+    position: absolute; left: 3%; bottom: 10%;
+    width: 50%; height: 48%;
+    display: flex; align-items: flex-end; gap: 5%;
+  }
+  .hero-slide .hs-chart .bar {
+    flex: 1; min-height: 6px;
+    background: linear-gradient(180deg,#A100FF 0%,#7500C0 100%);
+    border-radius: 3px 3px 0 0;
+  }
+  .hero-slide .hs-callout {
+    position: absolute; right: 3%; top: 36%;
+    width: 26%;
+    background: #f3e6ff; border-left: 4px solid #A100FF;
+    padding: 14px 16px; border-radius: 2px;
+  }
+  .hero-slide .hs-callout .cnum {
+    font-size: 56px; font-weight: 700; color: #460073; line-height: 1;
+    margin-bottom: 8px;
+  }
+  .hero-slide .hs-callout .ctxt {
+    font-size: 14px; line-height: 1.35; color: #2a2a2a;
+  }
+  .hero-slide.no-skill .hs-bg::before { background: #1f6fd6; }
+  .hero-slide.no-skill .hs-gt { display: none; }
+  .hero-slide.no-skill .hs-logo,
+  .hero-slide.no-skill .hs-title,
+  .hero-slide.no-skill .hs-callout .cnum {
+    font-family: 'Comic Sans MS','Comic Sans',cursive; color: #1f6fd6;
+  }
+  .hero-slide.no-skill .hs-title { text-transform: uppercase; }
+  .hero-slide.no-skill .hs-chart .bar { background: #1f6fd6; }
+  .hero-slide.no-skill .hs-callout { background: #e0eeff; border-left-color: #1f6fd6; }
+  .hero-slide.no-mcp .hs-logo {
+    color: #818180; background: #f1f1ef; padding: 4px 10px;
+    font-family: 'Courier New',monospace; font-size: 13px;
+  }
+  .hero-slide.no-mcp .hs-logo::before { content: '[MISSING] '; }
+  .hero-slide.no-mcp .hs-chart .bar {
+    background: repeating-linear-gradient(45deg,#cfcfcf 0,#cfcfcf 6px,#e8e8e8 6px,#e8e8e8 12px);
+  }
+  .hero-slide.broken::after {
+    content: 'shipped without QA'; position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%,-50%) rotate(-12deg);
+    background: rgba(212,69,47,0.92); color: #fff;
+    font-family: var(--mono); font-size: 16px; font-weight: 700;
+    padding: 6px 18px; border-radius: 3px; letter-spacing: 1px;
+  }
+
+  /* ── Skill Builder (author the SKILL.md the agent will use) ── */
+  .skill-builder {
+    background: #fdfaf5;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px 22px 14px;
+    margin-bottom: 18px;
+  }
+  .skill-builder .sb-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap; margin-bottom: 4px;
+  }
+  .skill-builder .sb-title {
+    font-family: var(--serif); font-weight: 400; font-size: 22px; margin: 0;
+  }
+  .skill-builder .sb-sub {
+    font-size: 12px; color: var(--muted); margin: 0;
+  }
+  .skill-builder .sb-cols {
+    display: grid; grid-template-columns: 1.05fr 1fr; gap: 18px;
+    margin-top: 14px;
+  }
+  .skill-builder .sb-rules { display: flex; flex-direction: column; gap: 8px; }
+  .skill-builder .sb-rule {
+    display: grid; grid-template-columns: 22px 1fr; gap: 10px;
+    align-items: start;
+    padding: 10px 12px; background: #fbf3df;
+    border: 1px solid #e8dcc0; border-radius: 4px;
+    cursor: pointer; transition: border-color 150ms ease, opacity 150ms ease;
+  }
+  .skill-builder .sb-rule:hover { border-color: var(--accent); }
+  .skill-builder .sb-rule.off { opacity: 0.45; background: #f3ede0; }
+  .skill-builder .sb-rule input[type="checkbox"] {
+    margin-top: 3px; accent-color: var(--accent); cursor: pointer;
+  }
+  .skill-builder .sb-rule .sb-rule-title {
+    font-size: 13px; font-weight: 600; color: var(--fg);
+  }
+  .skill-builder .sb-rule .sb-rule-body {
+    font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4;
+  }
+  .skill-builder .sb-rule .sb-rule-tag {
+    display: inline-block; margin-top: 4px;
+    font-family: var(--mono); font-size: 10px;
+    background: #fdfaf5; color: var(--accent);
+    border: 1px solid var(--border); border-radius: 3px;
+    padding: 1px 5px; letter-spacing: 0.4px;
+  }
+  .skill-builder .sb-preview-wrap {
+    background: #1a1814; color: #e8d8b8;
+    border-radius: 4px; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .skill-builder .sb-preview-head {
+    background: #2a241c; padding: 6px 12px;
+    font-family: var(--mono); font-size: 11px; color: #92d18a;
+    border-bottom: 1px solid #3a342a;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .skill-builder .sb-preview-head .file { color: #e8d8b8; }
+  .skill-builder .sb-preview {
+    margin: 0; padding: 12px 14px;
+    font-family: var(--mono); font-size: 12px; line-height: 1.55;
+    white-space: pre-wrap; word-break: break-word;
+    flex: 1; min-height: 220px; max-height: 360px; overflow-y: auto;
+  }
+  .skill-builder .sb-preview .key   { color: #7adfd6; }
+  .skill-builder .sb-preview .h     { color: #f4c674; font-weight: 700; }
+  .skill-builder .sb-preview .bul   { color: #d4452f; }
+  .skill-builder .sb-preview .com   { color: #8a8478; }
+  .skill-builder .sb-preview .str   { color: #92d18a; }
+  .skill-builder .sb-actions {
+    display: flex; gap: 8px; padding: 8px 12px;
+    background: #2a241c; border-top: 1px solid #3a342a;
+  }
+  .skill-builder .sb-actions button {
+    background: var(--accent); color: var(--cream); border: none;
+    padding: 6px 12px; border-radius: 3px; cursor: pointer;
+    font-family: inherit; font-size: 12px;
+  }
+  .skill-builder .sb-actions button.ghost {
+    background: transparent; color: #e8d8b8; border: 1px solid #5a5040;
+  }
+  .skill-builder .sb-actions .copied { color: #92d18a; font-size: 11px; align-self: center; opacity: 0; transition: opacity 200ms ease; }
+  .skill-builder .sb-actions .copied.show { opacity: 1; }
+  .skill-builder .sb-install {
+    margin: 0; padding: 10px 12px 12px; background: #2a241c;
+    border-top: 1px solid #3a342a; color: #b8a890; font-size: 11px;
+    line-height: 1.5;
+  }
+  .skill-builder .sb-install code {
+    font-family: var(--mono); font-size: 11px;
+    background: #1a1814; color: #f4c674; padding: 1px 5px; border-radius: 2px;
+  }
+  .skill-builder .sb-install em { font-style: normal; color: #e8d8b8; }
+  @media (max-width: 800px) {
+    .skill-builder .sb-cols { grid-template-columns: 1fr; }
+  }
+
+  /* ── DB terminal (the SQL/result console under the stage) ── */
+  .db-terminal {
+    background: #0e1822;
+    color: #e8d8b8;
+    border: 1px solid #1a2838;
+    border-radius: 6px;
+    font-family: var(--mono);
+    overflow: hidden;
+    transition: border-color 200ms ease, opacity 200ms ease;
+    display: flex; flex-direction: column;
+    min-height: 312px;
+  }
+  .db-terminal.hidden { display: none; }
+  .db-terminal.idle .db-term-head .live-dot { background: #5a5040; animation: none; }
+  .db-terminal.idle .db-term-pane.sql,
+  .db-terminal.idle .db-term-pane.result { opacity: 0.55; }
+  .db-term-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 14px; background: #1a2838;
+    font-size: 12px; color: #7adfd6; letter-spacing: 0.4px;
+    border-bottom: 1px solid #2a3848;
+  }
+  .db-term-head .right { font-size: 10px; color: #8a8478; letter-spacing: 0.6px; text-transform: uppercase; }
+  .db-term-head .right .live-dot {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: #d4452f; margin-right: 4px; vertical-align: middle;
+    animation: db-blink 1s steps(2) infinite;
+  }
+  @keyframes db-blink { 0%,50% { opacity: 1; } 50.01%,100% { opacity: 0.3; } }
+  .db-term-body {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    font-size: 13px;
+    line-height: 1.55;
+    flex: 1;
+  }
+  .db-term-pane { padding: 10px 14px; min-height: 120px; }
+  .db-term-pane.sql    { color: #7adfd6; border-bottom: 1px solid #2a3848; }
+  .db-term-pane.result { color: #e8d8b8; }
+  .db-term-pane .pane-label {
+    font-size: 10px; color: #8a8478; text-transform: uppercase;
+    letter-spacing: 0.7px; margin-bottom: 8px;
+  }
+  .db-term-pane pre {
+    margin: 0; font-family: inherit; font-size: inherit; line-height: inherit;
+    white-space: pre-wrap; word-break: break-word; min-height: 1em;
+  }
+  .db-term-pane .caret {
+    display: inline-block; width: 7px; height: 13px;
+    background: #7adfd6; vertical-align: text-bottom;
+    animation: db-blink 1s steps(2) infinite;
+    margin-left: 1px;
+  }
+  .db-term-pane .row {
+    opacity: 0; animation: db-fade-in 250ms ease-out forwards;
+  }
+  @keyframes db-fade-in { to { opacity: 1; } }
+  .db-term-pane .row.warn { color: #f4c674; }
+  .db-term-pane .row.fail { color: #f4847a; }
+  .db-term-pane .row.ok   { color: #92d18a; }
+  @media (max-width: 800px) {
+    .db-term-body { grid-template-rows: auto auto; }
+  }
+
+  /* ── Live PPTX slide preview (replaces SQL terminal panes) ── */
+  .db-terminal .db-term-body { display: block; padding: 14px; background: #0e1822; }
+  .slide-stage {
+    background: repeating-linear-gradient(45deg,#13202d 0,#13202d 6px,#0e1822 6px,#0e1822 12px);
+    padding: 14px;
+    border-radius: 4px;
+    height: 100%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .slide-canvas {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #ffffff;
+    border-radius: 3px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    overflow: hidden;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #0a0a0a;
+  }
+  .slide-canvas .layer { position: absolute; opacity: 0; transition: opacity 280ms ease; }
+  .slide-canvas .layer.on { opacity: 1; }
+  .slide-canvas .layer-bg {
+    inset: 0;
+    background: linear-gradient(180deg,#ffffff 0%,#ffffff 70%,#f3e6ff 100%);
+  }
+  .slide-canvas .layer-bg::before {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0;
+    height: 4%; background: linear-gradient(90deg,#A100FF 0%,#7500C0 60%,#460073 100%);
+  }
+  .slide-canvas .layer-gt {
+    top: 4%; right: 4%;
+    font-size: 28px; font-weight: 800; color: #A100FF; line-height: 1;
+  }
+  .slide-canvas .layer-logo {
+    top: 5%; left: 4%;
+    font-size: 14px; font-weight: 700; letter-spacing: -0.02em; color: #0a0a0a;
+  }
+  .slide-canvas .layer-title {
+    top: 18%; left: 4%; right: 30%;
+    font-size: 22px; font-weight: 600; letter-spacing: -0.01em; color: #0a0a0a;
+    line-height: 1.15;
+  }
+  .slide-canvas .layer-chart {
+    left: 4%; bottom: 12%;
+    width: 50%; height: 45%;
+    display: flex; align-items: flex-end; gap: 6%;
+    padding-left: 2px;
+  }
+  .slide-canvas .layer-chart .bar {
+    flex: 1;
+    background: linear-gradient(180deg,#A100FF 0%,#7500C0 100%);
+    border-radius: 2px 2px 0 0;
+    min-height: 4px;
+    transition: height 360ms ease;
+  }
+  .slide-canvas .layer-callout {
+    right: 4%; top: 38%;
+    width: 26%;
+    background: #f3e6ff; border-left: 3px solid #A100FF;
+    padding: 10px 12px;
+    border-radius: 2px;
+  }
+  .slide-canvas .layer-callout .cnum {
+    font-size: 28px; font-weight: 700; color: #460073; line-height: 1;
+    margin-bottom: 6px;
+  }
+  .slide-canvas .layer-callout .ctxt {
+    font-size: 10px; line-height: 1.35; color: #2a2a2a;
+  }
+  /* SKILL OFF: ugly defaults */
+  .slide-canvas.no-skill .layer-bg::before { background: #1f6fd6; }
+  .slide-canvas.no-skill .layer-gt { display: none; }
+  .slide-canvas.no-skill .layer-logo { font-family: 'Comic Sans MS','Comic Sans',cursive; color: #1f6fd6; }
+  .slide-canvas.no-skill .layer-title {
+    font-family: 'Comic Sans MS','Comic Sans',cursive; text-transform: uppercase;
+    color: #1f6fd6; font-weight: 700;
+  }
+  .slide-canvas.no-skill .layer-chart .bar { background: #1f6fd6; }
+  .slide-canvas.no-skill .layer-callout { background: #e0eeff; border-left-color: #1f6fd6; }
+  .slide-canvas.no-skill .layer-callout .cnum { color: #1f6fd6; font-family: 'Comic Sans MS','Comic Sans',cursive; }
+  /* MCP OFF: missing assets */
+  .slide-canvas.no-mcp .layer-logo {
+    color: #818180; background: #f1f1ef; padding: 2px 6px;
+    font-family: 'Courier New',monospace; font-size: 10px;
+  }
+  .slide-canvas.no-mcp .layer-logo::before { content: '[MISSING] '; }
+  .slide-canvas.no-mcp .layer-chart .bar { background: repeating-linear-gradient(45deg,#cfcfcf 0,#cfcfcf 4px,#e8e8e8 4px,#e8e8e8 8px); }
+  /* QA overlay */
+  .qa-overlay { position: absolute; inset: 0; pointer-events: none; }
+  .qa-overlay .qa-flag {
+    position: absolute;
+    border: 2px solid #d4452f;
+    border-radius: 50%;
+    background: rgba(212,69,47,0.08);
+    box-shadow: 0 0 0 2px rgba(212,69,47,0.2);
+  }
+  .qa-overlay .qa-label {
+    position: absolute;
+    background: #d4452f; color: #fff;
+    font-family: var(--mono); font-size: 9px;
+    padding: 2px 5px; border-radius: 2px;
+    white-space: nowrap;
+  }
+  .qa-overlay .qa-pass {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+    background: #2a8d4a; color: #fff;
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    padding: 6px 12px; border-radius: 3px;
+    letter-spacing: 0.6px;
+  }
+
+  /* ── Live panels under stage ── */
+  .live-panels { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .live-panel { background: #fdfaf5; border: 1px solid var(--border); border-radius: 4px; padding: 14px; position: relative; transition: opacity 200ms ease; }
+  .live-panel h4 {
+    margin: 0 0 4px; font-family: var(--mono); font-size: 12px;
+    color: var(--accent); font-weight: 600;
+  }
+  .live-panel .panel-sub { margin: 0 0 10px; font-size: 11px; color: var(--muted); font-family: var(--mono); }
+  .live-panel.off { background: #f3ede0; }
+  .live-panel.off h4, .live-panel.off .panel-sub { opacity: 0.5; }
+  .live-panel.off .rule-row, .live-panel.off .tool-row { opacity: 0.3; text-decoration: line-through; background: transparent; }
+  .live-panel.off .rule-row .icon, .live-panel.off .tool-row .icon { background: #efe7d4; color: var(--muted); }
+  .live-panel .off-badge {
+    position: absolute; top: 10px; right: 12px;
+    font-family: var(--mono); font-size: 10px; font-weight: 700;
+    color: var(--accent); background: #fbe6e1; border: 1px solid var(--accent);
+    padding: 2px 6px; border-radius: 3px; letter-spacing: 0.5px;
+    display: none;
+  }
+  .live-panel.off .off-badge { display: inline-block; }
+
+  .rule-row, .tool-row {
+    display: flex; align-items: flex-start; gap: 8px; padding: 8px 6px;
+    border-top: 1px solid #efe7d4; font-size: 13px; line-height: 1.35;
+    transition: background 200ms ease, opacity 200ms ease;
+  }
+  .rule-row:first-of-type, .tool-row:first-of-type { border-top: 0; }
+  .rule-row .icon, .tool-row .icon {
+    flex-shrink: 0; width: 18px; height: 18px; border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    background: #efe7d4; color: var(--muted);
+  }
+  .rule-row .label, .tool-row .label { flex: 1; }
+  .rule-row .label small, .tool-row .label small {
+    display: block; color: var(--muted); font-size: 11px; font-family: var(--mono); margin-top: 2px;
+  }
+  .rule-row.fired-pass, .tool-row.fired-pass { background: #eaf6e6; }
+  .rule-row.fired-pass .icon, .tool-row.fired-pass .icon { background: #3a7a3a; color: #fff; }
+  .rule-row.fired-fail { background: #fbe6e1; }
+  .rule-row.fired-fail .icon { background: var(--accent); color: #fff; }
+  .rule-row.skipped { opacity: 0.45; }
+  .rule-row.skipped .icon { background: transparent; border: 1px dashed var(--border); }
+  .rule-row.disabled { opacity: 0.35; text-decoration: line-through; }
+  .tool-row.active { background: #fbe6e1; }
+  .tool-row.active .icon { background: var(--accent); color: #fff; }
+  .tool-row.disabled { opacity: 0.35; }
+
+  .panel-footer {
+    margin-top: 10px; padding-top: 10px; border-top: 1px solid #efe7d4;
+    font-size: 11px; color: var(--muted);
+  }
+  .panel-footer a { color: var(--accent); text-decoration: none; }
+  .panel-footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+    .live-panels { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Pixel Consultant Agent</h1>
-  <div class="sub">How an AI agent uses a brand skill, MCP servers, and an automated reviewer to build one slide.</div>
+  <h1>Pixel Consultant</h1>
+  <div class="sub">how a consulting agent reads the <code>accenture-pptx</code> skill, calls Canva &amp; draw.io, and ships one branded slide that survives QA</div>
 
   <div class="layout">
     <div class="rail">
+      <div class="panel">
+        <h3>Brief</h3>
+        <div style="font-size:12px; line-height:1.5;">
+          <div style="color:var(--muted); font-family:var(--mono); font-size:10px; letter-spacing:0.4px; text-transform:uppercase;">From: Partner</div>
+          <div style="font-weight:600; margin-top:2px;">Cloud strategy 2026</div>
+          <div style="color:#3a3a3a; margin-top:4px;">Need 1 hero slide for tomorrow's steerco. Brand-compliant. One headline number. One chart.</div>
+        </div>
+      </div>
       <div class="panel">
         <h3>Layers</h3>
         <div class="toggle-row">
@@ -114,651 +559,2083 @@ button:hover { opacity: 0.85; }
         </div>
         <div class="toggle-row">
           <input type="checkbox" id="t-mcp" checked>
-          <label for="t-mcp">MCP servers</label>
+          <label for="t-mcp">MCP server</label>
         </div>
         <div class="toggle-row">
           <input type="checkbox" id="t-evals" checked>
-          <label for="t-evals">QA evals</label>
+          <label for="t-evals">Evals (QA critic)</label>
         </div>
       </div>
-      <div class="panel">
-        <h3>How to read it</h3>
-        <p style="font-size: 12px; color: var(--fg-2); line-height: 1.5;">
-          Hit <strong>Run</strong>. Watch the agent walk through 5 stations,
-          read the brand skill, call MCP servers, build a slide,
-          then pass it through QA. Toggle layers OFF to see what breaks.
-        </p>
-      </div>
     </div>
-    <div>
-      <div class="stage-wrap">
-        <canvas id="stage" width="480" height="280"></canvas>
-      </div>
-      <div class="controls">
-        <button id="btn-run">Run scenario</button>
-        <button id="btn-reset" class="ghost">Reset</button>
-      </div>
-      <div id="log" class="log"><div class="line">[idle] click "Run scenario" to start</div></div>
 
-      <div style="margin-top: 14px; color: var(--fg-3); font-size: 12px;">
-        Inspired by <a style="color: var(--purple);" href="https://ishalkin.github.io/czechitas-pixel-agent/">Czechitas Pixel Agent</a>.
-        Brand rules from the <code>accenture-pptx</code> skill (5 rule groups shown of ~30 total).
-        Toggle the layers to see what each one adds.
+    <div>
+      <div class="skill-builder">
+        <div class="sb-head">
+          <div>
+            <h3 class="sb-title">Build the accenture-pptx SKILL.md</h3>
+            <p class="sb-sub">Five rule groups. The agent reads them before assembling every slide. Tick what it should enforce — the SKILL.md preview updates live.</p>
+          </div>
+        </div>
+        <div class="sb-cols">
+          <div class="sb-rules" id="sb-rules"></div>
+          <div class="sb-preview-wrap">
+            <div class="sb-preview-head">
+              <span class="file">SKILL.md</span>
+              <span id="sb-preview-count">5 rules active</span>
+            </div>
+            <pre id="sb-preview" class="sb-preview"></pre>
+            <div class="sb-actions">
+              <button id="sb-download">Download skill (.zip)</button>
+              <button id="sb-copy" class="ghost">Copy</button>
+              <span id="sb-copied" class="copied">copied ✓</span>
+            </div>
+            <p class="sb-install">
+              Unzip into <code>~/.claude/skills/</code> — both Copilot in VS Code and Claude Code read that folder.
+              Then ask in chat: <em>"Build me a hero slide for cloud strategy 2026."</em>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-row">
+        <div class="stage-col">
+          <div class="stage-wrap">
+            <canvas id="stage" width="480" height="280"></canvas>
+          </div>
+          <div class="controls">
+            <button id="btn-run">Run scenario</button>
+            <button id="btn-reset" class="ghost">Reset</button>
+          </div>
+          <div id="log" class="log"><div class="line">[idle] click "Run scenario" to start the slide build</div></div>
+        </div>
+
+        <div id="db-terminal" class="db-terminal idle">
+          <div class="db-term-head">
+            <span><span id="db-term-tool">slide.pptx · waiting</span></span>
+            <span class="right"><span class="live-dot"></span><span id="db-term-state">idle</span></span>
+          </div>
+          <div class="db-term-body">
+            <div class="slide-stage" id="slide-stage">
+              <div class="slide-canvas" id="slide-canvas">
+                <div class="layer layer-bg" data-layer="bg"></div>
+                <div class="layer layer-gt" data-layer="gt">&gt;</div>
+                <div class="layer layer-logo" data-layer="logo">accenture</div>
+                <div class="layer layer-title" data-layer="title">Cloud strategy 2026</div>
+                <div class="layer layer-chart" data-layer="chart">
+                  <div class="bar" style="height:30%"></div>
+                  <div class="bar" style="height:55%"></div>
+                  <div class="bar" style="height:75%"></div>
+                  <div class="bar" style="height:90%"></div>
+                </div>
+                <div class="layer layer-callout" data-layer="callout">
+                  <div class="cnum">3.2&times;</div>
+                  <div class="ctxt">faster time-to-market on cloud-native stack</div>
+                </div>
+                <div class="qa-overlay" id="qa-overlay"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="full-dashboard" class="full-dashboard hidden">
+        <div class="dash-head">
+          <h3 id="dash-title" class="dash-title">Hero slide · Cloud strategy 2026</h3>
+          <div class="dash-meta">
+            <span id="dash-source" class="dash-source">accenture-pptx · 16:9 · 1 slide</span>
+            <span id="dash-tag" class="dash-tag">QA passed</span>
+          </div>
+        </div>
+        <div id="dash-bars" class="dash-bars"></div>
+        <div class="dash-foot">
+          one prompt, one branded slide — <em>only if SKILL, MCP and evals are wired</em>.
+        </div>
+      </div>
+
+      <div class="live-panels">
+        <div class="live-panel" id="skill-panel">
+          <span class="off-badge">SKILL OFF</span>
+          <h4>SKILL.md</h4>
+          <p class="panel-sub">accenture-pptx · 5 rule groups</p>
+          <div id="skill-rows"></div>
+          <div class="panel-footer">
+            Brand-compliance rules the agent reads before assembling any deck.
+          </div>
+        </div>
+        <div class="live-panel" id="mcp-panel">
+          <span class="off-badge">MCP OFF</span>
+          <h4>MCP servers</h4>
+          <p class="panel-sub">canva + drawio · 3 tools</p>
+          <div id="mcp-rows"></div>
+          <div class="panel-footer">
+            The agent picks the right tool per task — logo, photo, diagram.
+          </div>
+        </div>
+        <div class="live-panel" id="evals-panel">
+          <span class="off-badge">EVALS OFF</span>
+          <h4>accenture-pptx-qa</h4>
+          <p class="panel-sub">post-build critic · 3 checks</p>
+          <div id="evals-rows"></div>
+          <div class="panel-footer">
+            Skill catches <em>before</em>. QA evals check <em>after</em> — color, type, layout.
+          </div>
+        </div>
+      </div>
+
+      <div class="credit">
+        Sprites: <a href="https://arlantr.itch.io/metrocity">MetroCity by BK.A4</a> · Office layout:
+        <a href="https://github.com/thx0701/openclaw-virtual-office">openclaw-virtual-office (MIT)</a>
+        · Sibling demo:
+        <a href="https://ishalkin.github.io/czechitas-pixel-agent/">Czechitas Pixel Agent</a>
       </div>
     </div>
   </div>
 </div>
+
 <script>
 "use strict";
 
-const canvas = document.getElementById("stage");
-const ctx = canvas.getContext("2d");
-ctx.imageSmoothingEnabled = false;
+/* ═══════════════════════════════════════════════════════════════════
+ * ASSET LOADING
+ * ═══════════════════════════════════════════════════════════════════ */
 
-const W = 480, H = 280;
-
-// Brand-derived palette
-const PAL = {
-  floor:    "#2a1f44",
-  floor2:   "#221833",
-  wall:     "#1a1428",
-  agent:    "#A100FF",
-  agentSkin:"#f4d4b8",
-  agentDark:"#460073",
-  furniture:"#3a2960",
-  furniture2:"#241a3b",
-  highlight:"#C2A3FF",
-  white:    "#f1f1ef",
-  grey:     "#818180",
-  paper:    "#fafaf7",
-  red:      "#D32F2F",
-  green:    "#2E7D32",
-  yellow:   "#ffd166",
-  pink:     "#FF50A0",
-  mcp:      "#5bc0eb",
-  brand:    "#A100FF",
-  brandD:   "#460073",
-  brandM:   "#7500C0",
+const ASSETS = {
+  bg: "assets/office/generated-office.png",
+  juliaIdle: "assets/julia/Julia-Idle.png",
+  juliaForward: "assets/julia/Julia_walk_Foward.png",
+  juliaLeft: "assets/julia/Julia_walk_Left.png",
+  juliaRight: "assets/julia/Julia_walk_Rigth.png",
+  juliaUp: "assets/julia/Julia_walk_Up.png",
+  juliaPC: "assets/julia/Julia_PC.png",
+  chestClosed: "assets/office/chest-closed.png",
+  chestOpen: "assets/office/chest-open.png",
 };
 
-// Single pixel
-function px(x, y, c) {
-  ctx.fillStyle = c;
-  ctx.fillRect(x | 0, y | 0, 1, 1);
+const images = {};
+function loadAll() {
+  return Promise.all(Object.entries(ASSETS).map(([k, src]) => new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => { images[k] = img; res(); };
+    img.onerror = () => { console.warn("failed:", src); res(); }; // continue even on missing assets
+    img.src = src;
+  })));
 }
 
-// Filled rect
-function rect(x, y, w, h, c) {
-  ctx.fillStyle = c;
-  ctx.fillRect(x | 0, y | 0, w | 0, h | 0);
-}
+/* ═══════════════════════════════════════════════════════════════════
+ * STATIONS (5 fixed positions on the office floor)
+ * canvas is 480×280; place stations along sensible spots
+ * ═══════════════════════════════════════════════════════════════════ */
 
-// Outlined rect (1px stroke)
-function box(x, y, w, h, fill, stroke) {
-  if (fill) rect(x, y, w, h, fill);
-  if (!stroke) return;
-  ctx.fillStyle = stroke;
-  ctx.fillRect(x | 0, y | 0, w | 0, 1);
-  ctx.fillRect(x | 0, (y + h - 1) | 0, w | 0, 1);
-  ctx.fillRect(x | 0, y | 0, 1, h | 0);
-  ctx.fillRect((x + w - 1) | 0, y | 0, 1, h | 0);
-}
-
-// Tiny pixel-style text (the canvas's native text will be tiny but works)
-function text(s, x, y, c, size = 6) {
-  ctx.fillStyle = c;
-  ctx.font = `${size}px "SF Mono", Menlo, monospace`;
-  ctx.textBaseline = "top";
-  ctx.fillText(s, x | 0, y | 0);
-}
-
-// Center a string in a box
-function textCenter(s, cx, y, c, size = 6) {
-  ctx.fillStyle = c;
-  ctx.font = `${size}px "SF Mono", Menlo, monospace`;
-  ctx.textBaseline = "top";
-  const w = ctx.measureText(s).width;
-  ctx.fillText(s, (cx - w / 2) | 0, y | 0);
-}
-
-// Sleep helper for sequencing
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-// Clear and redraw the whole frame
-function clearStage() {
-  rect(0, 0, W, H, PAL.wall);
-}
-
-// 5 stations along the lower walking lane (y=200)
+// Stations sit in the open walking lane between the conference desk and
+// the bottom shelves (y ~ 215). Furniture extends UP from the agent's
+// feet, so the bottom-of-bg bookshelves stay visible behind them and
+// nothing "sits on top of" the shelves.
 const STATIONS = {
-  inbox: { x: 60,  y: 200, label: "INBOX" },
-  skill: { x: 140, y: 200, label: "SKILL" },
-  mcp:   { x: 220, y: 200, label: "MCP" },
-  build: { x: 300, y: 200, label: "BUILD" },
-  qa:    { x: 400, y: 200, label: "QA" },
+  inbox:  { x:  64, y: 218, label: "INBOX"      },
+  skill:  { x: 150, y: 218, label: "SKILL.md"   },
+  mcp:    { x: 240, y: 218, label: "MCP toolbox"},
+  db:     { x: 330, y: 218, label: "BUILD"      },
+  board:  { x: 416, y: 218, label: "QA CRITIC"  },
+  start:  { x:  64, y: 218, label: ""           },
 };
 
-function drawOffice() {
-  // Wall (top 60% darker)
-  rect(0, 0, W, 160, PAL.wall);
-  // Floor: alternating tiles
-  for (let ty = 160; ty < H; ty += 16) {
-    for (let tx = 0; tx < W; tx += 24) {
-      const c = ((tx / 24 + ty / 16) | 0) % 2 === 0 ? PAL.floor : PAL.floor2;
-      rect(tx, ty, 24, 16, c);
+/* ═══════════════════════════════════════════════════════════════════
+ * SPRITE CONFIG (Julia frames are 32×40 each, 4 frames per row)
+ * ═══════════════════════════════════════════════════════════════════ */
+
+const SPRITE_W = 32;
+const SPRITE_H = 40;
+const FRAMES = 4;
+
+/* ═══════════════════════════════════════════════════════════════════
+ * STATE
+ * ═══════════════════════════════════════════════════════════════════ */
+
+const state = {
+  scenario: "A",
+  rules: {
+    brandColors: true,
+    typography: true,
+    layout: true,
+    slideMode: true,
+    humanEditable: true,
+  },
+  skillOn: true,
+  mcpOn: true,
+  evalsOn: true,
+
+  agent: {
+    x: STATIONS.start.x,
+    y: STATIONS.start.y,
+    facing: "down",   // up | down | left | right
+    moving: false,
+    frame: 0,
+    frameTime: 0,
+    activity: "idle", // idle | walking | reading | tooling | drawing
+  },
+
+  steps: [],         // array of {fn, label} to play
+  stepIdx: 0,
+  stepCursor: null,  // current async target / handler
+  running: false,
+
+  bubble: null,      // { text, x, y, ttl }
+  log: [],           // ['ok|warn|fail|skill|info', text]
+
+  // MCP panel state — which tool is currently being highlighted
+  mcpOpen: false,            // chest sprite open/closed
+  mcpTool: null,             // null | "list_tables" | "describe_table" | "execute_query" | "blocked"
+
+  // MCP panel state — which tools have been used this run (persist after closeMcp)
+  // map: tool key → "used" | undefined
+  toolStatus: {},
+
+  // Skill panel state — which rules have fired this run
+  // map: rule key → "pass" | "fail" | "skip" | null (untouched / pending)
+  ruleStatus: {},
+
+  // Evals panel state — which evals fired this run
+  // map: eval key → "pass" | "fail" | "skip" | null (untouched / pending)
+  evalStatus: {},
+
+  // Whiteboard chart state — bars 0..5 drawn one by one
+  chartBars: 0,      // 0..5
+  chartTone: "ok",   // "ok" | "warn" | "fail"
+  chartShown: false,
+
+  // Recipe card on canvas at SKILL station. null = hidden.
+  // { lines: [{text, status: "pending"|"pass"|"fail"|"skip"}] }
+  recipeCard: null,
+
+  // Toolbox callout at MCP station. null = hidden.
+  // { open: bool, picked: "list_tables"|"describe_table"|"execute_query"|null }
+  toolbox: null,
+
+  // PC monitor content at DB station. null = hidden.
+  // { sql: string, rows: string[] }
+  dbScreen: null,
+
+  // Teacher / evaluator. Walks in from the right edge to the dashboard
+  // when evalsOn fires — holds expected.json on a clipboard, compares
+  // row-by-row, stamps the dashboard ✓ or ✗.
+  teacher: null, // { x, y, walking, frame, frameTime, holdingCard, verdict }
+  reportCard: null, // { lines: [{label, actual, expected, status}], tone }
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+ * RULE METADATA (used by skill panel)
+ * ═══════════════════════════════════════════════════════════════════ */
+
+// Czech labels match the Skill Builder app 1:1 — participants recognise their own words.
+// `body` is the markdown bullet that lands in the generated SKILL.md.
+const RULES = [
+  {
+    key: "brandColors",
+    label: "Brand colors — Purple A100FF dominant, ≤5% secondary",
+    short: "brand colors",
+    tag: "BRAND_COLORS",
+    pattern: "#A100FF · #460073 · #7500C0",
+    body: "Use Accenture purple (#A100FF) as the dominant accent. Secondary colors max 5% of slide area. Never blue/red/green for accents.",
+  },
+  {
+    key: "typography",
+    label: "Typography — Graphik, sentence case, 10pt floor",
+    short: "typography",
+    tag: "TYPOGRAPHY",
+    pattern: "Graphik / Helvetica · 10pt min",
+    body: "Set body in Graphik (fallback Helvetica Neue). Sentence case for titles. Never below 10pt. No Calibri, no Comic Sans.",
+  },
+  {
+    key: "layout",
+    label: "Layout — 0.45\"/0.35\" margins, squares not circles",
+    short: "layout",
+    tag: "LAYOUT",
+    pattern: "margins · squares",
+    body: "Outer margin 0.45\", inner gutter 0.35\". Use rectangular shapes — circles are off-brand for data viz.",
+  },
+  {
+    key: "slideMode",
+    label: "Slide mode — Presentation 12-14pt vs Detail 10-11pt",
+    short: "slide mode",
+    tag: "SLIDE_MODE",
+    pattern: "presentation | detail",
+    body: "Presentation mode: titles 24-32pt, body 12-14pt. Detail mode: body 10-11pt. Pick one — don't mix.",
+  },
+  {
+    key: "humanEditable",
+    label: "Human-editable — 1 info unit = 1 shape",
+    short: "human-editable",
+    tag: "HUMAN_EDITABLE",
+    pattern: "1 idea → 1 shape",
+    body: "Every information unit is its own shape — bullet, number, label. Never bake text into images. The deck must be editable in PowerPoint.",
+  },
+];
+
+const TOOLS = [
+  { key: "canva_brand_assets", label: "canva.brand_assets",    sub: "logo + brand palette" },
+  { key: "canva_stock_photo",  label: "canva.stock_photo",     sub: "hero photo for cover" },
+  { key: "drawio_diagram",     label: "drawio.architecture",   sub: "architecture diagram" },
+];
+
+// Evals run AFTER the slide is built — accenture-pptx-qa critic checks brand fit.
+const EVALS = [
+  { key: "brandColorCheck", label: "Brand colors within tolerance",  short: "brand colors",   tag: "A100FF dominant?" },
+  { key: "typographyCheck", label: "Typography on-brand & readable", short: "typography",     tag: "Graphik + ≥10pt?" },
+  { key: "layoutCheck",     label: "Layout / margins / shapes",      short: "layout",         tag: "0.45\" + squares?" },
+];
+
+/* ═══════════════════════════════════════════════════════════════════
+ * RENDERING
+ * ═══════════════════════════════════════════════════════════════════ */
+
+const cnv = document.getElementById("stage");
+// Logical (game) coordinates stay 480×280. Boost the backing store to 2× so
+// rasterized text and pixel-art labels get twice the resolution while CSS
+// still renders the canvas at its 480×280-derived display size. Sprites
+// drawn with imageSmoothingEnabled=false still look like crisp pixel art
+// (each source pixel becomes a 2×2 block instead of a stretched blur).
+const STAGE_DPR = 2;
+const STAGE_W = cnv.width;
+const STAGE_H = cnv.height;
+cnv.width  = STAGE_W * STAGE_DPR;
+cnv.height = STAGE_H * STAGE_DPR;
+const ctx = cnv.getContext("2d");
+ctx.imageSmoothingEnabled = false;
+ctx.scale(STAGE_DPR, STAGE_DPR);
+// Shadow `cnv.width` / `cnv.height` getters at the logical level so the
+// rest of the code (which reads cnv.width to position things at the right
+// edge) keeps working in 480×280 space.
+Object.defineProperty(cnv, "logicalW", { value: STAGE_W });
+Object.defineProperty(cnv, "logicalH", { value: STAGE_H });
+
+function draw() {
+  ctx.clearRect(0, 0, STAGE_W, STAGE_H);
+
+  // background office
+  if (images.bg) {
+    ctx.drawImage(images.bg, 0, 0, STAGE_W, STAGE_H);
+  } else {
+    ctx.fillStyle = "#3a2f25";
+    ctx.fillRect(0, 0, STAGE_W, STAGE_H);
+  }
+
+  // furniture sits on the floor at every station; draw before labels so
+  // pills land on top
+  drawInboxTray();
+  drawBookshelf();
+  drawMcpChest();
+  drawDbMonitor();
+  drawWhiteboard();
+
+  // floor labels (one per station, pill below the station y baseline)
+  ctx.font = "bold 9px ui-monospace, monospace";
+  ctx.textAlign = "center";
+  for (const [k, s] of Object.entries(STATIONS)) {
+    if (k === "start") continue;
+    const w = Math.ceil(ctx.measureText(s.label).width) + 8;
+    const py = s.y + 14;
+    ctx.fillStyle = "rgba(253, 250, 245, 0.95)";
+    ctx.fillRect(s.x - w / 2, py, w, 12);
+    ctx.strokeStyle = "rgba(161, 0, 255, 0.8)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(s.x - w / 2 + 0.5, py + 0.5, w - 1, 11);
+    ctx.fillStyle = "#1a1814";
+    ctx.fillText(s.label, s.x, py + 9);
+  }
+  ctx.textAlign = "start";
+
+  // ── Thinking visualizations (above stations) ──
+  drawRecipeCard();
+  drawToolbox();
+  // (DB monitor on canvas is decorative only — actual SQL/results stream
+  //  in the HTML db-terminal panel below the stage where they're readable.)
+
+  // agent sprite
+  drawAgent();
+  drawTeacher();
+  drawReportCard();
+
+  // speech bubble (drawn last so it overlays everything)
+  if (state.bubble) drawBubble(state.bubble);
+}
+
+// Each station gets a chunky 30×40-ish piece of furniture sitting on the
+// clean checkered floor to the LEFT of the agent. Big enough to read at
+// canvas scale even with the busy office bg.
+
+// INBOX = wooden table with stacked papers + an arriving envelope.
+function drawInboxTray() {
+  const s = STATIONS.inbox;
+  const tw = 28, tableTop = 4, legH = 14;
+  const bx = Math.round(s.x - tw - 6);
+  const tabY = Math.round(s.y - 18);
+
+  // table top
+  ctx.fillStyle = "#7a5430"; ctx.fillRect(bx, tabY, tw, tableTop);
+  ctx.fillStyle = "#5a3e22"; ctx.fillRect(bx, tabY + tableTop, tw, 1);
+  // legs
+  ctx.fillStyle = "#5a3e22";
+  ctx.fillRect(bx + 1, tabY + tableTop, 2, legH);
+  ctx.fillRect(bx + tw - 3, tabY + tableTop, 2, legH);
+
+  // paper stack on table
+  const stackY = tabY - 7;
+  ctx.fillStyle = "#fdfaf5"; ctx.fillRect(bx + 4, stackY, tw - 8, 7);
+  ctx.strokeStyle = "#bba"; ctx.lineWidth = 1;
+  ctx.strokeRect(bx + 4.5, stackY + 0.5, tw - 9, 6);
+  ctx.fillStyle = "#bba";
+  ctx.fillRect(bx + 6, stackY + 2, tw - 12, 1);
+  ctx.fillRect(bx + 6, stackY + 4, tw - 12, 1);
+
+  // floating envelope above (like a fresh prompt arriving)
+  const ex = bx + tw / 2 - 6, ey = tabY - 18;
+  ctx.fillStyle = "rgba(0,0,0,0.2)";
+  ctx.fillRect(ex + 1, ey + 1, 12, 8);
+  ctx.fillStyle = "#fdfaf5"; ctx.fillRect(ex, ey, 12, 8);
+  ctx.strokeStyle = "#1a1814"; ctx.strokeRect(ex + 0.5, ey + 0.5, 11, 7);
+  ctx.beginPath();
+  ctx.moveTo(ex + 0.5, ey + 0.5);
+  ctx.lineTo(ex + 6, ey + 4.5);
+  ctx.lineTo(ex + 11.5, ey + 0.5);
+  ctx.stroke();
+  // red wax seal
+  ctx.fillStyle = "#d4452f";
+  ctx.fillRect(ex + 4, ey + 5, 4, 2);
+}
+
+// SKILL = tall wooden lectern with a big open recipe book on top.
+// 30 px wide, 40 px tall. Clearly a reading stand with an instruction.
+function drawBookshelf() {
+  const s = STATIONS.skill;
+  const fw = 30;
+  const bx = Math.round(s.x - fw - 6);
+  const baseY = Math.round(s.y - 4);  // floor where base sits
+
+  // base (splayed feet)
+  ctx.fillStyle = "#3a2818"; ctx.fillRect(bx + 2, baseY, fw - 4, 3);
+  ctx.fillStyle = "#5a3e22"; ctx.fillRect(bx + 6, baseY - 3, fw - 12, 3);
+
+  // post
+  ctx.fillStyle = "#6b4a2a"; ctx.fillRect(bx + fw / 2 - 2, baseY - 18, 4, 18);
+
+  // angled top tray
+  const trayY = baseY - 28, trayW = fw, trayH = 4;
+  ctx.fillStyle = "#7a5430"; ctx.fillRect(bx, trayY, trayW, trayH);
+  ctx.fillStyle = "#5a3e22"; ctx.fillRect(bx, trayY + trayH, trayW, 2);
+  ctx.fillStyle = "#3a2818"; ctx.fillRect(bx, trayY - 1, trayW, 1);
+
+  // big open book on tray
+  const bookY = trayY - 10, bookH = 10;
+  ctx.fillStyle = "#fdfaf5"; ctx.fillRect(bx + 1, bookY, trayW - 2, bookH);
+  ctx.strokeStyle = "#1a1814"; ctx.lineWidth = 1;
+  ctx.strokeRect(bx + 1.5, bookY + 0.5, trayW - 3, bookH - 1);
+  // spine
+  ctx.fillStyle = "#1a1814"; ctx.fillRect(bx + fw / 2 - 0.5, bookY, 1, bookH);
+  // header bands (red, like SKILL.md heading)
+  ctx.fillStyle = "#d4452f";
+  ctx.fillRect(bx + 3, bookY + 2, (fw / 2) - 4, 1);
+  ctx.fillRect(bx + fw / 2 + 2, bookY + 2, (fw / 2) - 4, 1);
+  // ruled lines
+  ctx.fillStyle = "#8a8478";
+  for (let i = 0; i < 3; i++) {
+    ctx.fillRect(bx + 3, bookY + 4 + i * 2, (fw / 2) - 4, 1);
+    ctx.fillRect(bx + fw / 2 + 2, bookY + 4 + i * 2, (fw / 2) - 4, 1);
+  }
+}
+
+function drawMcpChest() {
+  const s = STATIONS.mcp;
+  const sheet = state.mcpOpen ? images.chestOpen : images.chestClosed;
+  const w = 30, h = 30;
+  const bx = Math.round(s.x - w - 6);
+  const by = Math.round(s.y - h + 6);
+  if (sheet) {
+    ctx.drawImage(sheet, 0, 0, sheet.width, sheet.height, bx, by, w, h);
+  } else {
+    ctx.fillStyle = "#6b4a2a"; ctx.fillRect(bx, by, w, h);
+  }
+}
+
+// DB = chunky standalone CRT monitor on the floor (no desk underneath).
+// Bezel + screen + neck + wide base. ~30 wide, ~36 tall total.
+function drawDbMonitor() {
+  const s = STATIONS.db;
+  const mw = 30, mh = 24;
+  const bx = Math.round(s.x - mw - 6);
+  const by = Math.round(s.y - mh - 6);
+
+  // wide base on the floor
+  const baseW = 22, baseH = 4;
+  ctx.fillStyle = "#3a2818";
+  ctx.fillRect(bx + mw / 2 - baseW / 2, by + mh + 5, baseW, baseH);
+  ctx.fillStyle = "#5a3e22";
+  ctx.fillRect(bx + mw / 2 - baseW / 2 + 1, by + mh + 5 + 1, baseW - 2, baseH - 2);
+  // neck
+  ctx.fillStyle = "#3a2818"; ctx.fillRect(bx + mw / 2 - 3, by + mh, 6, 5);
+
+  // monitor casing (cream/beige CRT vibe)
+  ctx.fillStyle = "#cbb89a"; ctx.fillRect(bx, by, mw, mh);
+  ctx.fillStyle = "#a89878"; ctx.fillRect(bx, by + mh - 2, mw, 2);
+  ctx.fillStyle = "#e8d8b8"; ctx.fillRect(bx, by, mw, 1);
+
+  // screen recess
+  ctx.fillStyle = "#1a1814"; ctx.fillRect(bx + 2, by + 2, mw - 4, mh - 6);
+  // screen — bright cyan when terminal is live, otherwise dim
+  const term = document.getElementById("db-terminal");
+  const live = !!term && !term.classList.contains("hidden") && !term.classList.contains("idle");
+  ctx.fillStyle = live ? "#0e2838" : "#0e1822";
+  ctx.fillRect(bx + 3, by + 3, mw - 6, mh - 8);
+  // a few scanlines + blinking cursor when live to suggest activity
+  if (live) {
+    ctx.fillStyle = "rgba(122, 223, 214, 0.35)";
+    for (let i = 0; i < 3; i++) ctx.fillRect(bx + 4, by + 5 + i * 3, mw - 8, 1);
+    // blinking caret
+    if (Math.floor(performance.now() / 400) % 2 === 0) {
+      ctx.fillStyle = "#7adfd6";
+      ctx.fillRect(bx + 4, by + mh - 11, 3, 2);
     }
   }
 
-  // Wall trim
-  rect(0, 158, W, 2, PAL.brandD);
+  // power LED
+  ctx.fillStyle = live ? "#92d18a" : "#d4452f";
+  ctx.fillRect(bx + mw - 4, by + mh - 4, 2, 2);
+}
 
-  // INBOX: mailbox/desk with envelope on top
-  drawDeskWithItem(STATIONS.inbox.x, STATIONS.inbox.y, "envelope");
-  // SKILL: open book on a podium
-  drawDeskWithItem(STATIONS.skill.x, STATIONS.skill.y, "book");
-  // MCP: server rack
-  drawServerRack(STATIONS.mcp.x, STATIONS.mcp.y);
-  // BUILD: workstation/easel
-  drawDeskWithItem(STATIONS.build.x, STATIONS.build.y, "monitor");
-  // QA: clipboard stand
-  drawDeskWithItem(STATIONS.qa.x, STATIONS.qa.y, "clipboard");
+// DASHBOARD = free-standing whiteboard on a tripod, planted on the floor
+// to the LEFT of the agent (same orientation as the other stations).
+function drawWhiteboard() {
+  const s = STATIONS.board;
+  const w = 58, h = 40;
+  const bx = Math.round(s.x - w - 6);
+  const by = Math.round(s.y - h - 6);
 
-  // Big wall board (slide canvas) above BUILD station
-  drawWallBoard(280, 50, 160, 90);
+  // tripod legs (drawn first, behind board)
+  ctx.strokeStyle = "#3a2818";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(bx + 8, by + h);          ctx.lineTo(bx + 4, by + h + 8);
+  ctx.moveTo(bx + w - 8, by + h);      ctx.lineTo(bx + w - 4, by + h + 8);
+  ctx.moveTo(bx + w / 2, by + h);      ctx.lineTo(bx + w / 2, by + h + 8);
+  ctx.stroke();
 
-  // Station labels (pills below each station)
-  for (const s of Object.values(STATIONS)) {
-    drawLabel(s.label, s.x, s.y + 18);
+  // tray
+  ctx.fillStyle = "#5a4a30";
+  ctx.fillRect(bx - 2, by + h - 2, w + 4, 3);
+  // board (white) with thin frame
+  ctx.fillStyle = "#fdfaf5";
+  ctx.fillRect(bx, by, w, h);
+  ctx.strokeStyle = "#1a1814";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(bx + 0.5, by + 0.5, w - 1, h - 1);
+
+  // title
+  ctx.fillStyle = "#1a1814";
+  ctx.font = "bold 8px ui-monospace, monospace";
+  ctx.textAlign = "center";
+  ctx.fillText("DASHBOARD", bx + w / 2, by + 9);
+
+  // baseline
+  const baseY = by + h - 5;
+  ctx.fillStyle = "#1a1814";
+  ctx.fillRect(bx + 4, baseY, w - 8, 1);
+
+  // bars (5 bars total, decreasing height left→right)
+  const colors = { ok: "#d4452f", warn: "#d8a93a", fail: "#7a3030" };
+  const bar = colors[state.chartTone] || colors.ok;
+  const slot = Math.floor((w - 10) / 5);
+  for (let i = 0; i < state.chartBars; i++) {
+    const bw = slot - 2;
+    const bh = 4 + (4 - i) * 4;
+    const bx2 = bx + 5 + i * slot;
+    const by2 = baseY - bh;
+    ctx.fillStyle = bar;
+    ctx.fillRect(bx2, by2, bw, bh);
   }
+  ctx.textAlign = "start";
 }
 
-function drawDeskWithItem(cx, cy, item) {
-  // Desk: 30 wide, 16 tall, sitting BELOW agent feet (cy is feet)
-  const dx = cx - 15, dy = cy - 28;
-  rect(dx, dy + 14, 30, 6, PAL.furniture);     // desk top
-  rect(dx + 2, dy + 20, 4, 8, PAL.furniture2); // left leg
-  rect(dx + 24, dy + 20, 4, 8, PAL.furniture2);// right leg
-  rect(dx, dy + 14, 30, 1, PAL.highlight);     // edge highlight
+/* The teacher (evals.json). Procedural sprite, no spritesheet — drawn
+ * directly so we can avoid shipping another asset. She wears a navy
+ * blazer and carries a clipboard with the "expected" answer. Walks in
+ * from off-screen right when evalsOn fires after the agent ships data. */
+function drawTeacher() {
+  const t = state.teacher;
+  if (!t) return;
+  const x = Math.round(t.x), y = Math.round(t.y);
+  const w = 18, h = 34;
+  const bx = x - Math.floor(w / 2);
+  const by = y - h;
+  const bob = t.walking ? (Math.floor(t.frame) % 2) : 0;
+  // When evals are turned off, fade the teacher so she's visibly inactive.
+  const prevAlpha = ctx.globalAlpha;
+  if (!state.evalsOn) ctx.globalAlpha = 0.32;
 
-  // Item on top
-  if (item === "envelope") {
-    rect(dx + 8, dy + 8, 14, 8, PAL.paper);
-    box(dx + 8, dy + 8, 14, 8, null, PAL.grey);
-    // envelope flap
-    px(dx + 14, dy + 11, PAL.grey);
-    px(dx + 15, dy + 12, PAL.grey);
-    px(dx + 16, dy + 11, PAL.grey);
-  } else if (item === "book") {
-    rect(dx + 6, dy + 6, 18, 10, PAL.paper);
-    rect(dx + 14, dy + 6, 2, 10, PAL.grey); // spine
-    // text lines
-    rect(dx + 8, dy + 9, 4, 1, PAL.grey);
-    rect(dx + 8, dy + 11, 5, 1, PAL.grey);
-    rect(dx + 17, dy + 9, 5, 1, PAL.grey);
-    rect(dx + 17, dy + 11, 4, 1, PAL.grey);
-  } else if (item === "monitor") {
-    rect(dx + 8, dy + 2, 14, 12, PAL.furniture2);
-    rect(dx + 9, dy + 3, 12, 10, PAL.brandD);
-    px(dx + 14, dy + 14, PAL.furniture2);
-    px(dx + 15, dy + 14, PAL.furniture2);
-  } else if (item === "clipboard") {
-    rect(dx + 9, dy + 4, 12, 12, PAL.paper);
-    rect(dx + 13, dy + 2, 4, 4, PAL.grey); // clip
-    rect(dx + 11, dy + 8, 8, 1, PAL.grey);
-    rect(dx + 11, dy + 10, 6, 1, PAL.grey);
-    rect(dx + 11, dy + 12, 8, 1, PAL.grey);
+  // shadow
+  ctx.fillStyle = "rgba(0,0,0,0.3)";
+  ctx.fillRect(bx + 2, by + h, w - 4, 2);
+
+  // legs (navy slacks)
+  ctx.fillStyle = "#1a2840";
+  if (t.walking && bob === 0) {
+    ctx.fillRect(bx + 4, by + 24, 4, 9);
+    ctx.fillRect(bx + 10, by + 24, 4, 7);
+  } else if (t.walking) {
+    ctx.fillRect(bx + 4, by + 24, 4, 7);
+    ctx.fillRect(bx + 10, by + 24, 4, 9);
+  } else {
+    ctx.fillRect(bx + 4, by + 24, 4, 9);
+    ctx.fillRect(bx + 10, by + 24, 4, 9);
   }
-}
+  // shoes
+  ctx.fillStyle = "#1a1814";
+  ctx.fillRect(bx + 3, by + h - 2, 5, 2);
+  ctx.fillRect(bx + 10, by + h - 2, 5, 2);
 
-function drawServerRack(cx, cy) {
-  const dx = cx - 14, dy = cy - 32;
-  rect(dx, dy, 28, 28, PAL.furniture2);
-  box(dx, dy, 28, 28, null, PAL.highlight);
-  // 4 server units with status LEDs
-  for (let i = 0; i < 4; i++) {
-    const sy = dy + 2 + i * 6;
-    rect(dx + 2, sy, 24, 5, PAL.furniture);
-    rect(dx + 4, sy + 1, 2, 1, PAL.brand);  // led
-    rect(dx + 8, sy + 2, 14, 1, PAL.grey);  // slot
+  // blazer body — navy
+  ctx.fillStyle = "#2a3858";
+  ctx.fillRect(bx + 2, by + 14, w - 4, 11);
+  // lapel V (lighter)
+  ctx.fillStyle = "#3a4868";
+  ctx.fillRect(bx + 7, by + 14, 4, 6);
+  // blazer red accent stripe
+  ctx.fillStyle = "#d4452f";
+  ctx.fillRect(bx + 8, by + 16, 2, 8);
+
+  // arms — same blazer color
+  ctx.fillStyle = "#2a3858";
+  ctx.fillRect(bx,        by + 15, 3, 8);
+  ctx.fillRect(bx + w - 3, by + 15, 3, 8);
+  // skin at wrist
+  ctx.fillStyle = "#e8b894";
+  ctx.fillRect(bx,        by + 22, 3, 2);
+  ctx.fillRect(bx + w - 3, by + 22, 3, 2);
+
+  // clipboard held in front (both arms wrap around)
+  if (t.holdingCard) {
+    const cbW = 11, cbH = 14;
+    const cbX = bx + Math.floor(w / 2) - Math.floor(cbW / 2);
+    const cbY = by + 17;
+    // shadow
+    ctx.fillStyle = "rgba(0,0,0,0.25)";
+    ctx.fillRect(cbX + 1, cbY + 1, cbW, cbH);
+    // paper
+    ctx.fillStyle = "#fdfaf5"; ctx.fillRect(cbX, cbY, cbW, cbH);
+    ctx.strokeStyle = "#1a1814"; ctx.lineWidth = 1;
+    ctx.strokeRect(cbX + 0.5, cbY + 0.5, cbW - 1, cbH - 1);
+    // brown clip at top
+    ctx.fillStyle = "#7a5430"; ctx.fillRect(cbX + 3, cbY - 2, cbW - 6, 3);
+    // ruled lines (the "expected" answers)
+    ctx.fillStyle = "#bba";
+    ctx.fillRect(cbX + 2, cbY + 3, cbW - 4, 1);
+    ctx.fillRect(cbX + 2, cbY + 6, cbW - 4, 1);
+    ctx.fillRect(cbX + 2, cbY + 9, cbW - 4, 1);
+    ctx.fillRect(cbX + 2, cbY + 12, cbW - 4, 1);
   }
+
+  // neck
+  ctx.fillStyle = "#e8b894";
+  ctx.fillRect(bx + 7, by + 11, 4, 3);
+
+  // head — skin tone
+  ctx.fillStyle = "#e8b894";
+  ctx.fillRect(bx + 4, by + 2, 10, 10);
+  // hair (brown bob, distinct from Julia's blonde)
+  ctx.fillStyle = "#5a3818";
+  ctx.fillRect(bx + 4, by, 10, 5);
+  ctx.fillRect(bx + 3, by + 2, 1, 6);
+  ctx.fillRect(bx + 14, by + 2, 1, 6);
+  // glasses (round black frames + nose bridge)
+  ctx.fillStyle = "#1a1814";
+  ctx.fillRect(bx + 5, by + 6, 3, 2);
+  ctx.fillRect(bx + 10, by + 6, 3, 2);
+  ctx.fillRect(bx + 8, by + 7, 2, 1);
+  // eyes inside the lenses
+  ctx.fillStyle = "#fdfaf5";
+  ctx.fillRect(bx + 6, by + 7, 1, 1);
+  ctx.fillRect(bx + 11, by + 7, 1, 1);
+  // mouth shifts with verdict
+  ctx.fillStyle = "#7a3030";
+  if (t.verdict === "pass") {
+    ctx.fillRect(bx + 6, by + 10, 6, 1);
+    ctx.fillRect(bx + 5, by + 9, 1, 1);
+    ctx.fillRect(bx + 12, by + 9, 1, 1);
+  } else if (t.verdict === "fail") {
+    ctx.fillRect(bx + 6, by + 10, 6, 1);
+    ctx.fillRect(bx + 5, by + 11, 1, 1);
+    ctx.fillRect(bx + 12, by + 11, 1, 1);
+  } else {
+    ctx.fillRect(bx + 7, by + 10, 4, 1);
+  }
+
+  // verdict letter above head when she finishes grading
+  if (t.verdict) {
+    const vx = bx + Math.floor(w / 2);
+    const vy = by - 5;
+    ctx.font = "bold 16px ui-monospace, monospace";
+    ctx.textAlign = "center";
+    ctx.fillStyle = t.verdict === "pass" ? "#3a7a3a"
+                  : t.verdict === "warn" ? "#d8a93a"
+                  : "#d4452f";
+    ctx.fillText(t.verdict === "pass" ? "✓" : t.verdict === "warn" ? "≈" : "✗", vx, vy);
+    ctx.textAlign = "start";
+  }
+
+  // floor pill label "TEACHER"
+  ctx.font = "bold 9px ui-monospace, monospace";
+  ctx.textAlign = "center";
+  const lab = "evals.json";
+  const lw = Math.ceil(ctx.measureText(lab).width) + 8;
+  const ly = y + 16;
+  ctx.fillStyle = "#fdfaf5";
+  ctx.fillRect(x - lw / 2, ly - 8, lw, 12);
+  ctx.strokeStyle = "#2a3858";
+  ctx.strokeRect(x - lw / 2 + 0.5, ly - 7.5, lw - 1, 11);
+  ctx.fillStyle = "#2a3858";
+  ctx.fillText(lab, x, ly);
+  ctx.textAlign = "start";
+
+  ctx.globalAlpha = prevAlpha;
 }
 
-function drawWallBoard(x, y, w, h) {
-  // Frame
-  box(x - 2, y - 2, w + 4, h + 4, PAL.furniture, PAL.highlight);
-  // Empty whiteboard (slide canvas) — paper white
-  rect(x, y, w, h, PAL.paper);
+// Report card: floats above the whiteboard while the teacher grades.
+// Two columns — actual (left, agent's number) vs expected (right, the
+// truth from the test fixture) — with row-level pass/fail markers.
+function drawReportCard() {
+  if (!state.reportCard) return;
+  const card = state.reportCard;
+  const s = STATIONS.board;
+  const w = 184, lh = 13, headH = 19, padTop = 4, padBot = 6;
+  const h = headH + padTop + card.lines.length * lh + padBot;
+  // anchor so the right edge of the card sits 6px from the canvas edge,
+  // and the card floats above the dashboard (whiteboard top sits ~y-46)
+  const bx = Math.round(STAGE_W - w - 6);
+  const by = Math.round(s.y - h - 60);
+
+  // shadow + paper
+  ctx.fillStyle = "rgba(0,0,0,0.32)";
+  ctx.fillRect(bx + 2, by + 2, w, h);
+  ctx.fillStyle = "#fdfaf5";
+  ctx.fillRect(bx, by, w, h);
+  ctx.strokeStyle = "#1a1814";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(bx + 0.5, by + 0.5, w - 1, h - 1);
+
+  // header band — navy, like the teacher's blazer
+  ctx.fillStyle = "#2a3858";
+  ctx.fillRect(bx, by, w, headH);
+  ctx.fillStyle = "#fdfaf5";
+  ctx.font = "bold 10px ui-monospace, monospace";
+  ctx.textAlign = "left";
+  ctx.fillText("evals.json", bx + 5, by + 13);
+  ctx.font = "8px ui-monospace, monospace";
+  ctx.fillText("actual vs expected", bx + 76, by + 13);
+
+  // column headers
+  ctx.font = "8px ui-monospace, monospace";
+  ctx.fillStyle = "#8a8478";
+  ctx.fillText("ACTUAL",   bx + 70, by + headH + 4);
+  ctx.fillText("EXPECTED", bx + 128, by + headH + 4);
+
+  // rows
+  ctx.font = "9px ui-monospace, monospace";
+  card.lines.forEach((ln, i) => {
+    const ly = by + headH + padTop + i * lh + 4;
+    ctx.fillStyle = "#1a1814";
+    ctx.fillText(ln.label, bx + 5, ly + 4);
+    // actual
+    let col = "#1a1814";
+    if (ln.status === "fail") col = "#d4452f";
+    else if (ln.status === "pass") col = "#3a7a3a";
+    else if (ln.status === "skip") col = "#8a8478";
+    ctx.fillStyle = col;
+    ctx.fillText(ln.actual ?? "—", bx + 70, ly + 4);
+    ctx.fillStyle = "#1a1814";
+    ctx.fillText(ln.expected ?? "—", bx + 128, ly + 4);
+    // marker on far right
+    let mark = "·", mcol = "#bba";
+    if (ln.status === "pass") { mark = "✓"; mcol = "#3a7a3a"; }
+    else if (ln.status === "fail") { mark = "✗"; mcol = "#d4452f"; }
+    else if (ln.status === "skip") { mark = "–"; mcol = "#bba"; }
+    ctx.fillStyle = mcol;
+    ctx.font = "bold 11px ui-monospace, monospace";
+    ctx.fillText(mark, bx + w - 12, ly + 5);
+    ctx.font = "9px ui-monospace, monospace";
+  });
+  ctx.textAlign = "start";
 }
 
-function drawLabel(s, cx, y) {
-  ctx.font = '6px "SF Mono", Menlo, monospace';
-  const w = ctx.measureText(s).width + 6;
-  rect((cx - w / 2) | 0, y, w, 8, PAL.furniture2);
-  textCenter(s, cx, y + 1, PAL.highlight, 6);
+/* ─ "Thinking" callouts above stations ─
+ * These make the agent's reasoning visible: which line of the recipe
+ * (SKILL) is being checked, which tool (MCP) is being picked from the
+ * box, what query went to the DB and what came back. */
+
+// Recipe card: floats above the lectern, drawn as a torn paper sheet
+// with a header band and numbered steps with checkboxes.
+function drawRecipeCard() {
+  if (!state.recipeCard) return;
+  const s = STATIONS.skill;
+  const lines = state.recipeCard.lines;
+  const w = 150, lh = 13, headH = 18, padTop = 4, padBot = 6;
+  const h = headH + padTop + lines.length * lh + padBot;
+  // float above and to the right of the lectern, clear of agent's head
+  const bx = Math.round(s.x - 8);
+  const by = Math.round(s.y - h - 22);
+
+  // shadow
+  ctx.fillStyle = "rgba(0,0,0,0.28)";
+  ctx.fillRect(bx + 2, by + 2, w, h);
+  // paper
+  ctx.fillStyle = "#fbf3df";
+  ctx.fillRect(bx, by, w, h);
+  ctx.strokeStyle = "#1a1814";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(bx + 0.5, by + 0.5, w - 1, h - 1);
+  // dog-ear top-right corner
+  ctx.fillStyle = "#e8dcc0";
+  ctx.beginPath();
+  ctx.moveTo(bx + w - 6, by);
+  ctx.lineTo(bx + w, by + 6);
+  ctx.lineTo(bx + w - 6, by + 6);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = "#bba";
+  ctx.beginPath();
+  ctx.moveTo(bx + w - 6, by);
+  ctx.lineTo(bx + w - 6, by + 6);
+  ctx.lineTo(bx + w, by + 6);
+  ctx.stroke();
+
+  // header band (Accenture purple)
+  ctx.fillStyle = "#A100FF";
+  ctx.fillRect(bx, by, w, headH);
+  ctx.fillStyle = "#fdfaf5";
+  ctx.font = "bold 10px ui-monospace, monospace";
+  ctx.textAlign = "left";
+  ctx.fillText("SKILL.md", bx + 5, by + 13);
+  ctx.font = "8px ui-monospace, monospace";
+  ctx.fillText("brand recipe", bx + 64, by + 13);
+
+  // numbered step lines with [ ] checkboxes that fill in
+  ctx.font = "9px ui-monospace, monospace";
+  lines.forEach((ln, i) => {
+    const ly = by + headH + padTop + i * lh;
+    // step number
+    ctx.fillStyle = "#8a8478";
+    ctx.fillText((i + 1) + ".", bx + 5, ly + 9);
+    // checkbox
+    const cx = bx + 18, cy = ly + 1;
+    ctx.fillStyle = "#fdfaf5";
+    ctx.fillRect(cx, cy, 9, 9);
+    ctx.strokeStyle = "#1a1814";
+    ctx.strokeRect(cx + 0.5, cy + 0.5, 8, 8);
+    // mark inside checkbox
+    let mark = "", col = "#1a1814";
+    if      (ln.status === "pass") { mark = "✓"; col = "#3a7a3a"; }
+    else if (ln.status === "fail") { mark = "✗"; col = "#d4452f"; }
+    else if (ln.status === "skip") { mark = "–"; col = "#bba"; }
+    ctx.fillStyle = col;
+    ctx.font = "bold 9px ui-monospace, monospace";
+    ctx.fillText(mark, cx + 1, cy + 8);
+    // label
+    ctx.font = "9px ui-monospace, monospace";
+    ctx.fillStyle = (ln.status === "skip") ? "#bba" : "#1a1814";
+    ctx.fillText(ln.text, cx + 14, ly + 9);
+  });
 }
 
-const agent = {
-  x: STATIONS.inbox.x,
-  y: STATIONS.inbox.y,
-  facing: "down",  // "up" | "down" | "left" | "right"
-  step: 0,         // walk cycle frame
-  thinking: false,
-};
+function drawToolbox() {
+  if (!state.toolbox) return;
+  const s = STATIONS.mcp;
+  const tools = [
+    { key: "canva_brand_assets", short: "brand_assets" },
+    { key: "canva_stock_photo",  short: "stock_photo"  },
+    { key: "drawio_diagram",     short: "drawio.arch"  },
+  ];
+  // vertical column of 3 chips above the chest — clearer + no horizontal overlap
+  // chest sits LEFT of agent → chest center ≈ s.x - 21
+  const chipW = 78, chipH = 14, gap = 2;
+  const totalH = chipH * 3 + gap * 2;
+  const chestCenterX = s.x - 21;
+  const bx = Math.round(chestCenterX - chipW / 2);
+  const by = Math.round(s.y - 12 - totalH - 34); // sit above chest, well above agent head
+
+  ctx.font = "bold 9px ui-monospace, monospace";
+  ctx.textAlign = "center";
+  tools.forEach((t, i) => {
+    const cy = by + i * (chipH + gap);
+    const isPicked = state.toolbox.picked === t.key;
+    const dimmed = state.toolbox.picked && !isPicked;
+    // shadow
+    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    ctx.fillRect(bx + 1, cy + 1, chipW, chipH);
+    // chip
+    if (isPicked)      ctx.fillStyle = "#d4452f";
+    else if (dimmed)   ctx.fillStyle = "#c9c0ad";
+    else               ctx.fillStyle = "#fdfaf5";
+    ctx.fillRect(bx, cy, chipW, chipH);
+    ctx.strokeStyle = isPicked ? "#1a1814" : "#8a8478";
+    ctx.strokeRect(bx + 0.5, cy + 0.5, chipW - 1, chipH - 1);
+    ctx.fillStyle = isPicked ? "#fdfaf5" : (dimmed ? "#bba" : "#1a1814");
+    ctx.fillText(t.short, bx + chipW / 2, cy + chipH - 4);
+  });
+  ctx.textAlign = "start";
+}
 
 function drawAgent() {
-  const x = (agent.x | 0) - 6, y = (agent.y | 0) - 22;
-  // shadow
-  rect(x + 2, y + 22, 8, 1, PAL.floor2);
-  // body (blazer purple)
-  rect(x + 3, y + 10, 6, 8, PAL.agent);
-  // shirt collar
-  rect(x + 4, y + 10, 4, 1, PAL.white);
-  px(x + 5, y + 11, PAL.agent);
-  px(x + 6, y + 11, PAL.agent);
-  // head
-  rect(x + 4, y + 4, 4, 6, PAL.agentSkin);
-  // hair
-  rect(x + 4, y + 3, 4, 2, PAL.agentDark);
-  px(x + 3, y + 4, PAL.agentDark);
-  px(x + 8, y + 4, PAL.agentDark);
-  // eyes
-  px(x + 4, y + 7, PAL.wall);
-  px(x + 7, y + 7, PAL.wall);
-  // arms
-  rect(x + 2, y + 11, 1, 5, PAL.agent);
-  rect(x + 9, y + 11, 1, 5, PAL.agent);
-  // legs (walk cycle) — flip every 8 frames for a natural gait
-  if (((agent.step / 8) | 0) % 2 === 0) {
-    rect(x + 4, y + 18, 2, 4, PAL.agentDark);
-    rect(x + 6, y + 18, 2, 4, PAL.agentDark);
+  const a = state.agent;
+  // Always pick a directional sprite by facing — never the bundled-with-desk
+  // juliaPC spritesheet (it draws the agent welded into a workstation, which
+  // looks like a "spinning computer" at our small office stations).
+  let sheet;
+  // Idle = standing still with no specific activity → face us (front idle).
+  // Reading/tooling/drawing keep the directional sheet so we still see
+  // her oriented at the station, but she's locked to a single frame.
+  const isIdle = !a.moving && (!a.activity || a.activity === "idle");
+  if (isIdle) {
+    sheet = images.juliaIdle;
+  } else if (!a.moving) {
+    if (a.facing === "up")         sheet = images.juliaUp;
+    else if (a.facing === "left")  sheet = images.juliaLeft;
+    else if (a.facing === "right") sheet = images.juliaRight;
+    else                           sheet = images.juliaIdle;
+  } else if (a.facing === "up")    sheet = images.juliaUp;
+    else if (a.facing === "left")  sheet = images.juliaLeft;
+    else if (a.facing === "right") sheet = images.juliaRight;
+    else                           sheet = images.juliaForward;
+
+  if (!sheet) return; // assets still loading
+
+  // Sheet layouts differ:
+  //   Julia-Idle.png            128×32   →  4 frames of 32×32 in one row
+  //   Julia_walk_<dir>.png      256×64   →  4 frames of 64×64 in one row
+  // Sample each sheet at its actual frame size — sampling 32×40 from the
+  // walk sheets used to splice half-of-frame-0 with the top of row-2,
+  // chopping the sprite at the torso during the walk cycle.
+  const cols = 4;
+  const frameW = Math.floor(sheet.width / cols);
+  const frameH = sheet.height;
+  const sx = a.frame * frameW;
+  // Walk-sheet content sits roughly y=15..47 of a 64-px cell — anchor at
+  // the visual feet (~ 0.74 × frameH) rather than the cell bottom so
+  // the agent doesn't appear to float over the floor labels.
+  const footAnchor = frameH > 32 ? Math.round(frameH * 0.74) : frameH;
+  const drawX = Math.round(a.x - frameW / 2);
+  const drawY = Math.round(a.y - footAnchor + 4);
+  ctx.drawImage(sheet, sx, 0, frameW, frameH, drawX, drawY, frameW, frameH);
+}
+
+function drawBubble(b) {
+  ctx.font = "bold 10px ui-monospace, monospace";
+  const lines = (b.text || "").split("\n");
+  const padding = 5;
+  const lh = 11;
+  let textW = 0;
+  for (const ln of lines) textW = Math.max(textW, ctx.measureText(ln).width);
+  const w = Math.ceil(textW) + padding * 2;
+  const h = lines.length * lh + padding * 2 - 2;
+
+  // place above the sprite, but clamp inside canvas left/right
+  let bx = Math.round(b.x - w / 2);
+  if (bx < 4) bx = 4;
+  if (bx + w > 476) bx = 476 - w;
+  const by = Math.round(b.y - SPRITE_H - h - 4);
+
+  if (b.kind === "thought") {
+    // thought cloud: actual scalloped lobes top + bottom, light blue fill
+    ctx.fillStyle = "#e8eef9";
+    ctx.strokeStyle = "#3a4a7a";
+    ctx.lineWidth = 1;
+    const lobeR = 4; // lobe radius
+    // build a path of overlapping bumps along all 4 edges
+    ctx.beginPath();
+    // top edge: bumps going right
+    let x = bx;
+    ctx.moveTo(bx, by + lobeR);
+    while (x + lobeR * 2 <= bx + w) {
+      ctx.arc(x + lobeR, by + lobeR, lobeR, Math.PI, 0, false);
+      x += lobeR * 2;
+    }
+    // right edge: bumps going down
+    let y = by + lobeR * 2;
+    while (y + lobeR * 2 <= by + h) {
+      ctx.arc(bx + w - lobeR, y, lobeR, -Math.PI / 2, Math.PI / 2, false);
+      y += lobeR * 2;
+    }
+    // bottom edge: bumps going left
+    x = bx + w;
+    while (x - lobeR * 2 >= bx) {
+      ctx.arc(x - lobeR, by + h - lobeR, lobeR, 0, Math.PI, false);
+      x -= lobeR * 2;
+    }
+    // left edge: bumps going up
+    y = by + h - lobeR * 2;
+    while (y - lobeR * 2 >= by) {
+      ctx.arc(bx + lobeR, y, lobeR, Math.PI / 2, Math.PI * 1.5, false);
+      y -= lobeR * 2;
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    // dotted tail toward sprite head
+    const tailX = Math.max(bx + 6, Math.min(bx + w - 6, b.x));
+    ctx.fillStyle = "#e8eef9";
+    ctx.beginPath();
+    ctx.arc(tailX, by + h + 5, 2.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(tailX + 2, by + h + 11, 1.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    // text in dark blue (thought color)
+    ctx.fillStyle = "#1f2c5a";
   } else {
-    rect(x + 3, y + 18, 2, 4, PAL.agentDark);
-    rect(x + 7, y + 18, 2, 4, PAL.agentDark);
+    // speech rectangle
+    ctx.fillStyle = "#fdfaf5";
+    ctx.fillRect(bx, by, w, h);
+    ctx.strokeStyle = "#1a1814";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(bx + 0.5, by + 0.5, w - 1, h - 1);
+    // pointed tail
+    const tailX = Math.max(bx + 4, Math.min(bx + w - 4, b.x));
+    ctx.fillStyle = "#fdfaf5";
+    ctx.fillRect(tailX - 1, by + h, 3, 3);
+    ctx.fillStyle = "#1a1814";
   }
-  // thinking bubble
-  if (agent.thinking) {
-    rect(x + 11, y - 4, 8, 6, PAL.paper);
-    box(x + 11, y - 4, 8, 6, null, PAL.grey);
-    px(x + 14, y + 0, PAL.grey);
-    px(x + 13, y - 1, PAL.grey);
-    px(x + 15, y - 2, PAL.grey);
-  }
+
+  // text lines
+  lines.forEach((ln, i) => {
+    ctx.fillText(ln, bx + padding, by + padding + 6 + i * lh);
+  });
 }
 
-// Move agent toward target (px); returns Promise that resolves when reached
-async function walkTo(targetX, targetY, speed = 1.5) {
-  const SPS = 60;  // steps per second
-  while (true) {
-    const dx = targetX - agent.x;
-    const dy = targetY - agent.y;
-    const dist = Math.hypot(dx, dy);
-    if (dist < speed) {
-      agent.x = targetX;
-      agent.y = targetY;
-      render();
-      return;
+/* ═══════════════════════════════════════════════════════════════════
+ * ANIMATION LOOP
+ * ═══════════════════════════════════════════════════════════════════ */
+
+let lastT = performance.now();
+function loop(t) {
+  const dt = t - lastT;
+  lastT = t;
+
+  // animate frames — walking is brisk, reading/tooling/drawing are slow.
+  // Pure idle (standing still, no activity) freezes on frame 0 so the
+  // agent stops looking like she's nervously bouncing in place.
+  const a = state.agent;
+  if (a.moving || (a.activity && a.activity !== "idle")) {
+    const frameInterval = (a.activity === "walking" || a.moving) ? 140 : 420;
+    a.frameTime += dt;
+    if (a.frameTime > frameInterval) {
+      a.frameTime = 0;
+      a.frame = (a.frame + 1) % FRAMES;
     }
-    agent.x += (dx / dist) * speed;
-    agent.y += (dy / dist) * speed;
-    agent.facing = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
-    agent.step = (agent.step + 1) % 60;
-    render();
-    await sleep(1000 / SPS);
-  }
-}
-
-// Master render — called every frame
-function render() {
-  clearStage();
-  drawOffice();
-  drawSlideLayers();
-  drawAgent();
-  drawCallouts();   // defined later
-}
-
-// Stub callouts so render works now
-const callouts = {
-  brief: null,    // { x, y, lines: [...] }
-  skill: null,    // { x, y, items: [{ text, checked }] }
-  mcp: null,      // { x, y, calls: [{ tool, status }] }
-};
-
-function drawCallouts() {
-  if (callouts.brief)  drawBriefCallout(callouts.brief);
-  if (callouts.skill)  drawSkillCallout(callouts.skill);
-  if (callouts.mcp)    drawMcpCallout(callouts.mcp);
-}
-
-function drawBriefCallout(c) {
-  const w = 90, h = 36;
-  const x = c.x - w / 2, y = c.y - 60;
-  rect(x, y, w, h, PAL.paper);
-  box(x, y, w, h, null, PAL.grey);
-  // Tail
-  rect(x + w / 2 - 1, y + h, 2, 3, PAL.paper);
-  // Header bar
-  rect(x, y, w, 6, PAL.pink);
-  text("CLIENT BRIEF", x + 4, y + 0, PAL.white, 5);
-  // Body lines
-  for (let i = 0; i < c.lines.length; i++) {
-    text(c.lines[i], x + 4, y + 9 + i * 6, PAL.wall, 5);
-  }
-}
-
-function drawSkillCallout(c) {
-  const w = 100, h = 50;
-  const x = c.x - w / 2, y = c.y - 74;
-  rect(x, y, w, h, PAL.paper);
-  box(x, y, w, h, null, PAL.grey);
-  rect(x + w / 2 - 1, y + h, 2, 3, PAL.paper);
-  rect(x, y, w, 6, PAL.brand);
-  text("accenture-pptx · SKILL", x + 4, y + 0, PAL.white, 5);
-  for (let i = 0; i < c.items.length; i++) {
-    const item = c.items[i];
-    const ty = y + 9 + i * 7;
-    // Checkbox
-    box(x + 4, ty, 5, 5, item.checked ? PAL.green : PAL.paper, PAL.grey);
-    if (item.checked) {
-      px(x + 5, ty + 2, PAL.white);
-      px(x + 6, ty + 3, PAL.white);
-      px(x + 7, ty + 1, PAL.white);
-    }
-    text(item.text, x + 12, ty - 1, PAL.wall, 5);
-  }
-}
-
-function drawMcpCallout(c) {
-  const w = 100, h = 36;
-  const x = c.x - w / 2, y = c.y - 60;
-  rect(x, y, w, h, PAL.paper);
-  box(x, y, w, h, null, PAL.grey);
-  rect(x + w / 2 - 1, y + h, 2, 3, PAL.paper);
-  rect(x, y, w, 6, PAL.mcp);
-  text("MCP TOOLBOX", x + 4, y + 0, PAL.white, 5);
-  for (let i = 0; i < c.calls.length; i++) {
-    const call = c.calls[i];
-    const ty = y + 9 + i * 6;
-    // Status dot
-    let dotC = PAL.grey;
-    if (call.status === "calling") dotC = PAL.yellow;
-    if (call.status === "done")    dotC = PAL.green;
-    if (call.status === "error")   dotC = PAL.red;
-    rect(x + 4, ty + 1, 3, 3, dotC);
-    text(call.tool, x + 10, ty - 1, PAL.wall, 5);
-  }
-}
-
-const slide = {
-  // Set of layer names that have been added
-  layers: new Set(),
-  // Whether QA is annotating violations
-  qaAnnotations: [], // { x, y, w, h, label }
-};
-
-const SLIDE_BOX = { x: 280, y: 50, w: 160, h: 90 };
-
-function drawSlideLayers() {
-  const { x, y, w, h } = SLIDE_BOX;
-  const skillOn = toggles.skill;
-  const mcpOn = toggles.mcp;
-
-  if (slide.layers.has("bg")) {
-    rect(x, y, w, h, PAL.paper);
-    if (skillOn) {
-      rect(x, y, w, 4, PAL.brandD);
-      rect(x, y + 4, w, 1, PAL.brandM);
-    } else {
-      // Off-brand blue
-      rect(x, y, w, 4, "#224BFF");
-    }
-  }
-  if (slide.layers.has("gt") && skillOn) {
-    text(">", x + w - 10, y + 6, PAL.brand, 8);
-  }
-  if (slide.layers.has("logo")) {
-    if (mcpOn) {
-      rect(x + 6, y + 8, 2, 6, PAL.brand);
-      rect(x + 9, y + 8, 2, 6, PAL.brand);
-      rect(x + 12, y + 8, 2, 6, PAL.brand);
-      rect(x + 15, y + 8, 2, 6, PAL.brand);
-      rect(x + 6, y + 14, 11, 1, PAL.brand);
-    } else {
-      // Missing asset placeholder
-      box(x + 4, y + 6, 16, 10, "#eee", PAL.grey);
-      text("?", x + 10, y + 7, PAL.grey, 8);
-    }
-  }
-  if (slide.layers.has("title")) {
-    if (skillOn) {
-      text("Cloud strategy 2026", x + 6, y + 22, PAL.wall, 7);
-      rect(x + 6, y + 32, 30, 1, PAL.brand);
-    } else {
-      // ALL CAPS, smaller, off-brand color
-      text("CLOUD STRATEGY 2026", x + 6, y + 22, "#224BFF", 5);
-    }
-  }
-  if (slide.layers.has("chart")) {
-    const bx = x + 8, by = y + 42;
-    const heights = [28, 22, 16, 10];
-    const barC = skillOn ? PAL.brand : "#224BFF";
-    for (let i = 0; i < 4; i++) {
-      rect(bx + i * 12, by + 28 - heights[i], 8, heights[i], barC);
-    }
-    rect(bx, by + 28, 56, 1, PAL.grey);
-  }
-  if (slide.layers.has("callout")) {
-    if (skillOn) {
-      rect(x + w - 60, y + 50, 54, 22, PAL.brand);
-      text("60% cost cut", x + w - 56, y + 54, PAL.white, 6);
-      text("over 18 months",  x + w - 56, y + 62, PAL.white, 6);
-    } else {
-      // No fill, plain black text — looks generic
-      box(x + w - 60, y + 50, 54, 22, null, PAL.grey);
-      text("60% cost cut",   x + w - 56, y + 54, PAL.wall, 5);
-      text("over 18 months", x + w - 56, y + 62, PAL.wall, 5);
-    }
-  }
-
-  for (const a of slide.qaAnnotations) {
-    drawQACircle(a);
-  }
-}
-
-function drawQACircle(a) {
-  // Draw a "circle" by drawing a hollow square approximation (pixelated)
-  const { x, y, w, h, label } = a;
-  ctx.fillStyle = PAL.red;
-  // Top + bottom
-  ctx.fillRect(x + 2, y, w - 4, 1);
-  ctx.fillRect(x + 2, y + h - 1, w - 4, 1);
-  // Sides
-  ctx.fillRect(x, y + 2, 1, h - 4);
-  ctx.fillRect(x + w - 1, y + 2, 1, h - 4);
-  // Diagonal corners
-  ctx.fillRect(x + 1, y + 1, 1, 1);
-  ctx.fillRect(x + w - 2, y + 1, 1, 1);
-  ctx.fillRect(x + 1, y + h - 2, 1, 1);
-  ctx.fillRect(x + w - 2, y + h - 2, 1, 1);
-  // Label tail going up-right
-  text(label, x + w + 2, y - 4, PAL.red, 5);
-}
-
-const toggles = {
-  skill: true,
-  mcp: true,
-  evals: true,
-};
-
-document.getElementById("t-skill").addEventListener("change", e => toggles.skill = e.target.checked);
-document.getElementById("t-mcp").addEventListener("change", e => toggles.mcp = e.target.checked);
-document.getElementById("t-evals").addEventListener("change", e => toggles.evals = e.target.checked);
-
-const logEl = document.getElementById("log");
-function log(msg, kind = "") {
-  const div = document.createElement("div");
-  div.className = "line" + (kind ? " " + kind : "");
-  div.textContent = msg;
-  logEl.appendChild(div);
-  logEl.scrollTop = logEl.scrollHeight;
-}
-function clearLog() { logEl.innerHTML = ""; }
-
-let running = false;
-
-function reset() {
-  agent.x = STATIONS.inbox.x;
-  agent.y = STATIONS.inbox.y;
-  agent.thinking = false;
-  callouts.brief = null;
-  callouts.skill = null;
-  callouts.mcp = null;
-  slide.layers.clear();
-  slide.qaAnnotations.length = 0;
-  clearLog();
-  log("[idle] click \"Run scenario\" to start");
-  render();
-}
-
-async function runScenario() {
-  if (running) return;
-  running = true;
-  reset();
-  clearLog();
-  document.getElementById("btn-run").disabled = true;
-  document.getElementById("btn-run").style.opacity = "0.5";
-
-  // ── 1. INBOX ──
-  log("walking to INBOX…");
-  await walkTo(STATIONS.inbox.x, STATIONS.inbox.y);
-  log("> Client e-mail: Cloud strategy, 1 slide", "brief");
-  callouts.brief = {
-    x: STATIONS.inbox.x, y: STATIONS.inbox.y,
-    lines: ["Cloud strategy", "1 hero slide", "for CFO Monday"],
-  };
-  render();
-  await sleep(1500);
-
-  // ── 2. SKILL ──
-  callouts.brief = null;
-  log("walking to SKILL…");
-  await walkTo(STATIONS.skill.x, STATIONS.skill.y);
-
-  if (toggles.skill) {
-    log("> reading accenture-pptx/SKILL.md", "skill");
-    callouts.skill = {
-      x: STATIONS.skill.x, y: STATIONS.skill.y,
-      items: [
-        { text: "Brand colors (purple A100FF)",  checked: false },
-        { text: "Typography (Graphik, 10pt fl.)",checked: false },
-        { text: "Layout margins (0.45 / 0.35)",  checked: false },
-        { text: "Slide modes (Pres / Detail)",   checked: false },
-        { text: "Editable: 1 unit = 1 shape",    checked: false },
-      ],
-    };
-    render();
-    for (let i = 0; i < callouts.skill.items.length; i++) {
-      await sleep(400);
-      callouts.skill.items[i].checked = true;
-      log("  ✓ " + callouts.skill.items[i].text, "skill");
-      render();
-    }
-    await sleep(800);
   } else {
-    log("> SKILL OFF — agent has no brand rules", "bad");
-    agent.thinking = true;
-    render();
-    await sleep(1500);
-    agent.thinking = false;
+    a.frame = 0;
+    a.frameTime = 0;
   }
-  callouts.skill = null;
 
-  // ── 3. MCP ──
-  log("walking to MCP…");
-  await walkTo(STATIONS.mcp.x, STATIONS.mcp.y);
-  if (toggles.mcp) {
-    log("> calling MCP servers", "mcp");
-    callouts.mcp = {
-      x: STATIONS.mcp.x, y: STATIONS.mcp.y,
-      calls: [
-        { tool: "canva.findLogo()",      status: "idle" },
-        { tool: "canva.findPhoto()",     status: "idle" },
-        { tool: "drawio.diagram()",      status: "idle" },
-      ],
-    };
-    render();
-    for (const call of callouts.mcp.calls) {
-      call.status = "calling"; render();
-      log("  → " + call.tool, "mcp");
-      await sleep(700);
-      call.status = "done"; render();
-      await sleep(200);
+  // teacher walk cycle (own clock, slower)
+  if (state.teacher && state.teacher.walking) {
+    state.teacher.frameTime = (state.teacher.frameTime || 0) + dt;
+    if (state.teacher.frameTime > 180) {
+      state.teacher.frameTime = 0;
+      state.teacher.frame = (state.teacher.frame || 0) + 1;
     }
-    await sleep(600);
-  } else {
-    log("> MCP OFF — no asset access", "bad");
-    await sleep(1500);
   }
-  callouts.mcp = null;
 
-  // ── 4. BUILD ──
-  log("walking to BUILD…");
-  await walkTo(STATIONS.build.x, STATIONS.build.y);
-  log("> assembling slide layer by layer", "build");
-  // Layer order. Each layer becomes "broken" when toggles missing.
-  const layerOrder = ["bg", "gt", "logo", "title", "chart", "callout"];
-  for (const layer of layerOrder) {
-    await sleep(350);
-    slide.layers.add(layer);
-    log("  + " + layer, "build");
-    render();
+  // bubble TTL
+  if (state.bubble) {
+    state.bubble.ttl -= dt;
+    if (state.bubble.ttl <= 0) state.bubble = null;
   }
-  await sleep(600);
 
-  // ── 5. QA ──
-  log("walking to QA…");
-  await walkTo(STATIONS.qa.x, STATIONS.qa.y);
-  if (toggles.evals) {
-    log("> accenture-pptx-qa critic running", "qa");
-    await sleep(800);
-    // If skill or mcp off, flag violations
-    const violations = [];
-    if (!toggles.skill) {
-      violations.push({ x: SLIDE_BOX.x + 4, y: SLIDE_BOX.y + 18, w: 100, h: 18, label: "Calibri off-brand" });
-      violations.push({ x: SLIDE_BOX.x + 4, y: SLIDE_BOX.y + 40, w: 70, h: 30, label: "8pt < 10pt floor" });
-    }
-    if (!toggles.mcp) {
-      violations.push({ x: SLIDE_BOX.x + 4, y: SLIDE_BOX.y + 6, w: 18, h: 12, label: "missing logo" });
-    }
-    if (violations.length === 0) {
-      log("  ✓ all 5 rule groups pass", "qa");
-      // Green pass mark
-      text("PASS", SLIDE_BOX.x + SLIDE_BOX.w - 28, SLIDE_BOX.y + SLIDE_BOX.h - 12, PAL.green, 8);
-    } else {
-      for (const v of violations) {
-        slide.qaAnnotations.push(v);
-        log("  ✗ " + v.label, "bad");
-        render();
-        await sleep(500);
+  // step cursor (movement updates)
+  if (state.stepCursor) state.stepCursor(dt);
+
+  draw();
+  requestAnimationFrame(loop);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * STEP PRIMITIVES — building blocks for scenarios
+ * each returns a Promise that resolves when the step completes
+ * ═══════════════════════════════════════════════════════════════════ */
+
+function wait(ms) {
+  return new Promise(res => setTimeout(res, ms));
+}
+
+function moveTo(targetX, targetY) {
+  return new Promise(res => {
+    const a = state.agent;
+    const speed = 50; // px/s
+    state.stepCursor = (dt) => {
+      const dx = targetX - a.x;
+      const dy = targetY - a.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 1) {
+        a.moving = false;
+        state.stepCursor = null;
+        res();
+        return;
       }
-      log("[QA] " + violations.length + " violations — needs rework", "bad");
-    }
-    render();
-  } else {
-    log("> EVALS OFF — broken slide ships", "bad");
-    await sleep(800);
-    log("[client] :( this is off-brand, please redo", "bad");
-  }
-
-  log("scenario complete", "");
-  running = false;
-  document.getElementById("btn-run").disabled = false;
-  document.getElementById("btn-run").style.opacity = "1";
+      a.moving = true;
+      const step = (speed * dt) / 1000;
+      const nx = dx / dist;
+      const ny = dy / dist;
+      a.x += nx * Math.min(step, dist);
+      a.y += ny * Math.min(step, dist);
+      // facing
+      if (Math.abs(dx) > Math.abs(dy)) a.facing = dx > 0 ? "right" : "left";
+      else                              a.facing = dy > 0 ? "down" : "up";
+    };
+  });
 }
 
-document.getElementById("btn-run").addEventListener("click", runScenario);
-document.getElementById("btn-reset").addEventListener("click", reset);
+function gotoStation(key) {
+  const s = STATIONS[key];
+  return moveTo(s.x, s.y);
+}
 
-render();
+function say(text, ms = 2400) {
+  state.bubble = { text, x: state.agent.x, y: state.agent.y, ttl: ms, kind: "speech" };
+  return wait(ms);
+}
+
+function teacherSay(text, ms = 2600) {
+  if (!state.teacher) return wait(ms);
+  state.bubble = { text, x: state.teacher.x, y: state.teacher.y, ttl: ms, kind: "speech" };
+  return wait(ms);
+}
+
+// Thought bubble — agent's internal reasoning. Cloud-shaped, blue text.
+function think(text, ms = 3000) {
+  state.bubble = { text, x: state.agent.x, y: state.agent.y, ttl: ms, kind: "thought" };
+  return wait(ms);
+}
+
+function activity(name, ms) {
+  state.agent.activity = name;
+  state.agent.moving = false;
+  return wait(ms).then(() => { state.agent.activity = "idle"; });
+}
+
+// Skill panel primitives — drive the HTML panel under the stage
+function clearRules() {
+  state.ruleStatus = {};
+  renderSkillPanel();
+}
+function setCheck(key, status) {
+  state.ruleStatus[key] = status;
+  renderSkillPanel();
+}
+
+function setEval(key, status) {
+  state.evalStatus[key] = status;
+  renderEvalsPanel();
+}
+
+/* Teacher (evals.json) primitives.
+ * She lives off-screen at the right edge until walkInTeacher pulls her
+ * over to the dashboard. The clipboard appears in her hands once she
+ * arrives — that's the "expected.json" reference she compares against. */
+
+// Teacher stands at the top-left of the room, in clear floor space
+// above the agent's walking lane. She's a separate, visibly distinct
+// character — not blocking the dashboard, the whiteboard report card,
+// the agent's stations, or the agent's path along the bottom lane.
+const TEACHER_GRADE_X = 86;
+const TEACHER_Y = 158;
+
+function spawnTeacher() {
+  state.teacher = {
+    x: TEACHER_GRADE_X,
+    y: TEACHER_Y,
+    walking: false,
+    frame: 0,
+    frameTime: 0,
+    holdingCard: false,
+    verdict: null,
+  };
+}
+// Teacher is now permanent — kept for symmetry with spawnTeacher but
+// no longer called from grading. Only resetAll() should call this.
+function despawnTeacher() {
+  state.teacher = null;
+  state.reportCard = null;
+}
+
+async function walkTeacherTo(targetX) {
+  if (!state.teacher) spawnTeacher();
+  state.teacher.walking = true;
+  return new Promise(resolve => {
+    state.stepCursor = (dt) => {
+      const t = state.teacher;
+      if (!t) { state.stepCursor = null; resolve(); return; }
+      const dx = targetX - t.x;
+      const speed = 0.06; // px per ms
+      const step = speed * dt;
+      if (Math.abs(dx) <= step) {
+        t.x = targetX;
+        t.walking = false;
+        state.stepCursor = null;
+        resolve();
+      } else {
+        t.x += Math.sign(dx) * step;
+      }
+    };
+  });
+}
+
+function openReportCard(rows) {
+  // rows: [{label, actual, expected}]
+  state.reportCard = {
+    lines: rows.map(r => ({ ...r, status: "pending" })),
+    tone: "ok",
+  };
+}
+function setReportRow(idx, status) {
+  if (!state.reportCard) return;
+  if (state.reportCard.lines[idx]) state.reportCard.lines[idx].status = status;
+}
+function closeReportCard() { state.reportCard = null; }
+
+/* Full eval scene: walk teacher in from the right, hold up the
+ * expected.json clipboard, grade row-by-row (also setting the legacy
+ * evals panel for the bottom rail), stamp final verdict, walk away.
+ * rows: [{key, label, actual, expected, verdict}]   (verdict per-row)
+ * opts.finalVerdict: "pass"|"warn"|"fail"
+ * opts.headline:     short Czech sentence she "says" at the end */
+async function runTeacherGrading(rows, opts = {}) {
+  if (!state.teacher) spawnTeacher();
+  logLine("skill", "evals: QA critic reviewing the slide");
+  state.teacher.verdict = null;
+  state.teacher.holdingCard = true;
+  await wait(300);
+  openReportCard(rows.map(r => ({
+    label: r.label, actual: r.actual, expected: r.expected,
+  })));
+  await wait(700);
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    setReportRow(i, r.verdict);
+    setEval(r.key, r.verdict);
+    if (r.verdict === "fail")  logLine("fail", `eval[${r.label}]: actual=${r.actual} ≠ expected=${r.expected}`);
+    if (r.verdict === "pass")  logLine("ok",   `eval[${r.label}]: ${r.actual} ✓`);
+    if (r.verdict === "warn")  logLine("warn", `eval[${r.label}]: ${r.actual} ≈ ${r.expected}`);
+    await wait(620);
+  }
+  await wait(500);
+  state.teacher.verdict = opts.finalVerdict || "pass";
+  if (opts.headline) await teacherSay(opts.headline, 1500);
+  await wait(1100);
+  // teacher stays in the room; just lower the clipboard and clear the side card
+  state.teacher.holdingCard = false;
+  closeReportCard();
+}
+
+
+// MCP panel primitives — drive the HTML panel + chest sprite on canvas
+function openMcp(tool = null) {
+  state.mcpOpen = true;
+  state.mcpTool = tool;
+  state.toolbox = { open: true, picked: null };
+  renderMcpPanel();
+}
+function setTool(tool) {
+  state.mcpTool = tool;
+  if (tool) state.toolStatus[tool] = "used";
+  if (state.toolbox) state.toolbox.picked = tool;
+  renderMcpPanel();
+}
+function closeMcp() {
+  state.mcpOpen = false;
+  state.mcpTool = null;
+  state.toolbox = null;
+  renderMcpPanel();
+}
+
+// Recipe-card primitives — drive the SKILL station "thinking" overlay
+function openRecipe() {
+  state.recipeCard = {
+    lines: RULES.map(r => ({
+      text: r.short,
+      status: state.skillOn && state.rules[r.key] ? "pending" : "skip",
+    })),
+  };
+}
+function setRecipeLine(key, status) {
+  if (!state.recipeCard) return;
+  const idx = RULES.findIndex(r => r.key === key);
+  if (idx >= 0) state.recipeCard.lines[idx].status = status;
+}
+function closeRecipe() { state.recipeCard = null; }
+
+// Slide stage primitives — drive the live HTML/CSS PPTX preview.
+// The slide is a 16:9 div with stacked .layer children. We reveal layers
+// one at a time during BUILD, and overlay QA red circles or a green PASS.
+const SLIDE_LAYERS = ["bg", "gt", "logo", "title", "chart", "callout"];
+function showDbTerminal(toolLabel = "slide.pptx · building") {
+  const panel = document.getElementById("db-terminal");
+  const tool  = document.getElementById("db-term-tool");
+  const stEl  = document.getElementById("db-term-state");
+  const cv    = document.getElementById("slide-canvas");
+  const ov    = document.getElementById("qa-overlay");
+  if (!panel) return;
+  panel.classList.remove("hidden", "idle");
+  if (tool)  tool.textContent = toolLabel;
+  if (stEl)  stEl.textContent = "live";
+  if (cv) {
+    cv.classList.remove("no-skill", "no-mcp");
+    SLIDE_LAYERS.forEach(k => {
+      const el = cv.querySelector('[data-layer="' + k + '"]');
+      if (el) el.classList.remove("on");
+    });
+    if (!state.skillOn) cv.classList.add("no-skill");
+    if (!state.mcpOn)   cv.classList.add("no-mcp");
+  }
+  if (ov) ov.innerHTML = "";
+}
+function hideDbTerminal() {
+  const panel = document.getElementById("db-terminal");
+  const tool  = document.getElementById("db-term-tool");
+  const stEl  = document.getElementById("db-term-state");
+  if (panel) { panel.classList.remove("hidden"); panel.classList.add("idle"); }
+  if (tool)  tool.textContent = "slide.pptx · waiting";
+  if (stEl)  stEl.textContent = "idle";
+}
+async function addSlideLayer(name, ms = 380) {
+  const cv = document.getElementById("slide-canvas");
+  if (!cv) return;
+  const el = cv.querySelector('[data-layer="' + name + '"]');
+  if (el) el.classList.add("on");
+  await wait(ms);
+}
+function flagQa(rect, label) {
+  const ov = document.getElementById("qa-overlay");
+  if (!ov) return;
+  const f = document.createElement("div");
+  f.className = "qa-flag";
+  f.style.left   = rect.x + "%";
+  f.style.top    = rect.y + "%";
+  f.style.width  = rect.w + "%";
+  f.style.height = rect.h + "%";
+  ov.appendChild(f);
+  if (label) {
+    const t = document.createElement("div");
+    t.className = "qa-label";
+    t.textContent = label;
+    t.style.left = (rect.x + rect.w + 1) + "%";
+    t.style.top  = (rect.y + rect.h / 2 - 3) + "%";
+    ov.appendChild(t);
+  }
+}
+function passQa() {
+  const ov = document.getElementById("qa-overlay");
+  if (!ov) return;
+  const p = document.createElement("div");
+  p.className = "qa-pass";
+  p.textContent = "QA PASS · ON-BRAND";
+  ov.appendChild(p);
+}
+// Back-compat shims kept for legacy scenario branches.
+function openDbScreen() {}
+function closeDbScreen() {}
+async function typeDbSql() {}
+async function streamDbRows() {}
+
+// Chart primitives
+async function drawChartBar(tone) {
+  state.chartTone = tone;
+  state.chartShown = true;
+  for (let i = 0; i < 5; i++) {
+    state.chartBars = i + 1;
+    await wait(180);
+  }
+}
+function clearChart() {
+  state.chartBars = 0;
+  state.chartShown = false;
+}
+
+// Full HTML dashboard — the "this is what you can build" payoff.
+// Renders real numbers below the stage when a clean run finishes.
+// Scenario A = top-10 countries by attack count.
+// Scenario C = JOIN preview (country code → resolved name + attack count).
+//   When the JOIN runs against COUNTRY_DIRTYDATA, the same code resolves
+//   to two names — that's the "leak" learners can spot in the preview.
+const TOP10 = [
+  { country: "Iraq",        n: 15400 },
+  { country: "Afghanistan", n: 12970 },
+  { country: "Pakistan",    n:  6112 },
+  { country: "India",       n:  5700 },
+  { country: "Yemen",       n:  4847 },
+  { country: "Nigeria",     n:  4012 },
+  { country: "Philippines", n:  4007 },
+  { country: "Somalia",     n:  3681 },
+  { country: "Syria",       n:  2332 },
+  { country: "Libya",       n:  2139 },
+];
+const JOIN_CLEAN = [
+  { code: "95",  name: "Iraq",        n: 15400 },
+  { code: "4",   name: "Afghanistan", n: 12970 },
+  { code: "153", name: "Pakistan",    n:  6112 },
+  { code: "92",  name: "India",       n:  5700 },
+  { code: "228", name: "Yemen",       n:  4847 },
+  { code: "147", name: "Nigeria",     n:  4012 },
+  { code: "160", name: "Philippines", n:  4007 },
+  { code: "200", name: "Somalia",     n:  3681 },
+];
+// Same query against the dirty table: a few country codes appear twice
+// because DIRTYDATA carries duplicate rows under slightly different names.
+const JOIN_DIRTY = [
+  { code: "95",  name: "Iraq",        n: 15400 },
+  { code: "95",  name: "Iraq, Republic of", n: 15400, dup: true },
+  { code: "4",   name: "Afghanistan", n: 12970 },
+  { code: "153", name: "Pakistan",    n:  6112 },
+  { code: "153", name: "Pakistan (Islamic Rep.)", n: 6112, dup: true },
+  { code: "92",  name: "India",       n:  5700 },
+  { code: "228", name: "Yemen",       n:  4847 },
+  { code: "228", name: "Yemen, Rep.", n:  4847, dup: true },
+];
+
+function showFullDashboard(tone = "ok", source = "clean", scenario = "A") {
+  const dash = document.getElementById("full-dashboard");
+  const bars = document.getElementById("dash-bars");
+  const tag  = document.getElementById("dash-tag");
+  const title = document.getElementById("dash-title");
+  const meta = document.getElementById("dash-source");
+  if (!dash || !bars) return;
+
+  dash.classList.remove("hidden", "warn", "fail");
+  if (tone === "warn") dash.classList.add("warn");
+  if (tone === "fail") dash.classList.add("fail");
+
+  if (tone === "warn")      tag.textContent = "QA · brand drift";
+  else if (tone === "fail") tag.textContent = "shipped broken · client unhappy";
+  else                      tag.textContent = "QA passed · brand-compliant";
+
+  if (title) title.textContent = "Hero slide · Cloud strategy 2026";
+  if (meta)  meta.textContent  = state.skillOn
+    ? "accenture-pptx · Graphik · A100FF"
+    : "no skill · Calibri · off-brand blue";
+
+  bars.innerHTML = "";
+
+  // Render a big version of the same slide HTML for the post-run payoff.
+  const slideClass =
+    "hero-slide" +
+    (state.skillOn ? "" : " no-skill") +
+    (state.mcpOn   ? "" : " no-mcp") +
+    (tone === "fail" ? " broken" : "");
+  bars.innerHTML =
+    '<div class="' + slideClass + '">' +
+      '<div class="hs-bg"></div>' +
+      '<div class="hs-gt">&gt;</div>' +
+      '<div class="hs-logo">accenture</div>' +
+      '<div class="hs-title">Cloud strategy 2026</div>' +
+      '<div class="hs-chart">' +
+        '<div class="bar" style="height:30%"></div>' +
+        '<div class="bar" style="height:55%"></div>' +
+        '<div class="bar" style="height:75%"></div>' +
+        '<div class="bar" style="height:90%"></div>' +
+      '</div>' +
+      '<div class="hs-callout">' +
+        '<div class="cnum">3.2&times;</div>' +
+        '<div class="ctxt">faster time-to-market on cloud-native stack</div>' +
+      '</div>' +
+    '</div>';
+}
+
+function hideFullDashboard() {
+  const dash = document.getElementById("full-dashboard");
+  if (dash) dash.classList.add("hidden");
+}
+
+function logLine(kind, text) {
+  state.log.push({ kind, text });
+  renderLog();
+}
+
+function renderLog() {
+  const el = document.getElementById("log");
+  el.innerHTML = state.log.map(l => `<div class="line ${l.kind}">${escHtml(l.text)}</div>`).join("");
+  el.scrollTop = el.scrollHeight;
+}
+
+function renderSkillPanel() {
+  const panel = document.getElementById("skill-panel");
+  const wrap  = document.getElementById("skill-rows");
+  if (!panel || !wrap) return;
+  panel.classList.toggle("off", !state.skillOn);
+  wrap.innerHTML = RULES.map(r => {
+    const enabled = state.skillOn && state.rules[r.key];
+    const status  = state.ruleStatus[r.key]; // "pass" | "fail" | "skip" | undefined
+    let cls = "rule-row";
+    let icon = "·";
+    if (!enabled) {
+      cls += " disabled";
+      icon = "·";
+    } else if (status === "pass")  { cls += " fired-pass"; icon = "✓"; }
+    else if (status === "fail")    { cls += " fired-fail"; icon = "✗"; }
+    else if (status === "skip")    { cls += " skipped";    icon = "–"; }
+    return `<div class="${cls}">
+      <div class="icon">${icon}</div>
+      <div class="label">${escHtml(r.label)}<small>${escHtml(r.pattern)}</small></div>
+    </div>`;
+  }).join("");
+}
+
+function renderMcpPanel() {
+  const panel = document.getElementById("mcp-panel");
+  const wrap  = document.getElementById("mcp-rows");
+  if (!panel || !wrap) return;
+  const enabled = state.mcpOn;
+  panel.classList.toggle("off", !enabled);
+  wrap.innerHTML = TOOLS.map(t => {
+    const active = enabled && state.mcpTool === t.key;
+    const used   = enabled && state.toolStatus[t.key] === "used";
+    let cls = "tool-row";
+    let icon = "·";
+    if (!enabled) cls += " disabled";
+    else if (active) { cls += " active"; icon = "▶"; }
+    else if (used)   { cls += " fired-pass"; icon = "✓"; }
+    return `<div class="${cls}">
+      <div class="icon">${icon}</div>
+      <div class="label">${escHtml(t.label)}<small>${escHtml(t.sub)}</small></div>
+    </div>`;
+  }).join("");
+}
+
+function renderEvalsPanel() {
+  const panel = document.getElementById("evals-panel");
+  const wrap  = document.getElementById("evals-rows");
+  if (!panel || !wrap) return;
+  panel.classList.toggle("off", !state.evalsOn);
+  wrap.innerHTML = EVALS.map(e => {
+    const enabled = state.evalsOn;
+    const status  = state.evalStatus[e.key];
+    let cls = "rule-row";
+    let icon = "·";
+    if (!enabled) {
+      cls += " disabled";
+    } else if (status === "pass") { cls += " fired-pass"; icon = "✓"; }
+    else if (status === "fail")   { cls += " fired-fail"; icon = "✗"; }
+    else if (status === "skip")   { cls += " skipped";    icon = "–"; }
+    return `<div class="${cls}">
+      <div class="icon">${icon}</div>
+      <div class="label">${escHtml(e.label)}<small>${escHtml(e.tag)}</small></div>
+    </div>`;
+  }).join("");
+}
+
+function escHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * SCENARIOS — narrative coherent with stack-trace demo
+ * ═══════════════════════════════════════════════════════════════════ */
+
+/* Pre-mark all four rules as "pending" for this run so the panel shows
+ * untouched rules in their default (enabled-but-grey) state, then we tick
+ * them off one by one as the agent walks past SKILL. */
+function beginRun() {
+  state.ruleStatus = {};
+  state.evalStatus = {};
+  state.toolStatus = {};
+  state.mcpOpen = false;
+  state.mcpTool = null;
+  state.chartBars = 0;
+  state.chartShown = false;
+  state.recipeCard = null;
+  state.toolbox = null;
+  state.dbScreen = null;
+  // Teacher is permanent — clear the report card + verdict but keep her in the room.
+  spawnTeacher();
+  hideFullDashboard();
+  hideDbTerminal();
+  renderSkillPanel();
+  renderMcpPanel();
+  renderEvalsPanel();
+}
+
+/* Walk past skill: tick each rule per its status.
+ *   predicates[key] can be:
+ *     - undefined / false / null → rule didn't match the SQL → "pass"
+ *     - "block"                  → rule matched a destructive thing → "fail" (red)
+ *     - "rewrite"                → rule matched and rewrote the SQL → "pass" (green) + log line
+ *   Rule with toggle off → "skip" (dim).
+ *   Returns the first rule that returned "block" (so the caller can short-circuit). */
+async function walkSkillStation(predicates) {
+  await gotoStation("skill");
+  state.agent.facing = "up";
+  state.agent.activity = "reading";
+  openRecipe();
+  logLine("skill", `SKILL loaded: accenture-pptx (${RULES.length} rule groups)`);
+  await wait(400);
+  let blockedBy = null;
+  for (const r of RULES) {
+    await wait(380);
+    if (!state.rules[r.key]) {
+      setCheck(r.key, "skip");
+      setRecipeLine(r.key, "skip");
+      continue;
+    }
+    const verdict = predicates[r.key];
+    if (verdict === "block") {
+      setCheck(r.key, "fail");
+      setRecipeLine(r.key, "fail");
+      logLine("fail", `rule "${r.short}" — blocks the slide`);
+      blockedBy = blockedBy || r;
+    } else if (verdict === "rewrite") {
+      setCheck(r.key, "pass");
+      setRecipeLine(r.key, "pass");
+      logLine("ok", `rule "${r.short}" — rewrote the slide`);
+    } else {
+      setCheck(r.key, "pass");
+      setRecipeLine(r.key, "pass");
+    }
+  }
+  state.agent.activity = "idle";
+  await wait(500);
+  closeRecipe();
+  return blockedBy;
+}
+
+async function useTool(tool) {
+  setTool(tool);
+  await wait(900);
+}
+
+async function runScenarioA() {
+  // The single accenture-pptx hero scenario:
+  // INBOX → SKILL → MCP (Canva + draw.io) → BUILD (slide layers) → QA critic.
+  beginRun();
+
+  await gotoStation("inbox");
+  await say("new brief!", 900);
+  logLine("info", "BRIEF: Cloud strategy 2026 · 1 hero slide for steerco");
+  await think("partner needs one slide.\nbrand-compliant.\nheadline number + chart.", 2200);
+
+  if (state.skillOn) {
+    await think("first the checklist —\nwhat does accenture-pptx\nrequire?", 1600);
+    await walkSkillStation({});
+    await think("all 5 rule groups loaded.\non to assets.", 1500);
+  } else {
+    logLine("warn", "SKILL off — no brand pre-flight");
+    await think("skill is OFF —\nskipping brand checks", 1400);
+  }
+
+  if (!state.mcpOn) {
+    await gotoStation("mcp");
+    await say("MCP off — no assets", 1500);
+    logLine("fail", "MCP off — Canva/draw.io unreachable, [MISSING ASSET] placeholders");
+  } else {
+    await gotoStation("mcp");
+    openMcp();
+    await think("MCP exposes 3 tools.\nwhich do I need?", 1800);
+    await useTool("canva_brand_assets");
+    await think("1) canva.brand_assets —\nofficial logo + palette", 1500);
+    await useTool("canva_stock_photo");
+    await think("2) canva.stock_photo —\nhero photo for cover", 1500);
+    await useTool("drawio_diagram");
+    await think("3) drawio.architecture —\ncloud-native stack diagram", 1400);
+    logLine("info", "MCP: 3 assets fetched");
+    closeMcp();
+  }
+
+  // BUILD — assemble the slide layer by layer.
+  await gotoStation("db");
+  state.agent.facing = "left";
+  state.agent.activity = "tooling";
+  showDbTerminal("slide.pptx · building layers");
+  await think("assembling layers:\nbg → logo → title →\nchart → callout", 1800);
+  await addSlideLayer("bg", 380);    logLine("info", "layer 1 · background + GT bar");
+  await addSlideLayer("gt", 320);    logLine("info", "layer 2 · GT brand mark");
+  await addSlideLayer("logo", 360);  logLine("info", state.mcpOn ? "layer 3 · accenture logo (canva)" : "layer 3 · [MISSING] logo placeholder");
+  await addSlideLayer("title", 380); logLine("info", "layer 4 · title — Cloud strategy 2026");
+  await addSlideLayer("chart", 420); logLine("info", "layer 5 · chart bars");
+  await addSlideLayer("callout", 380); logLine("info", "layer 6 · callout — 3.2× faster TTM");
+  await wait(700);
+  state.agent.activity = "idle";
+
+  // QA — critic walks in, evaluates the slide.
+  await gotoStation("board");
+  let qaTone = "ok";
+  if (!state.skillOn) qaTone = "fail";
+  else if (!state.mcpOn) qaTone = "warn";
+
+  if (state.evalsOn) {
+    await say("calling QA critic", 1100);
+    if (qaTone === "ok") {
+      await runTeacherGrading([
+        { key: "brandColorCheck", label: "brand colors", actual: "A100FF", expected: "A100FF", verdict: "pass" },
+        { key: "typographyCheck", label: "typography",   actual: "Graphik 12pt", expected: "Graphik ≥10pt", verdict: "pass" },
+        { key: "layoutCheck",     label: "layout",       actual: "0.45\" · squares", expected: "0.45\" · squares", verdict: "pass" },
+      ], { headline: "ship it. ✓", finalVerdict: "pass" });
+      passQa();
+      logLine("ok", "QA passed — slide is brand-compliant, ship to client");
+    } else if (qaTone === "warn") {
+      flagQa({ x: 4, y: 6, w: 22, h: 12 }, "MISSING logo");
+      flagQa({ x: 6, y: 50, w: 48, h: 30 }, "placeholder bars");
+      await runTeacherGrading([
+        { key: "brandColorCheck", label: "brand colors", actual: "A100FF",        expected: "A100FF",        verdict: "pass" },
+        { key: "typographyCheck", label: "typography",   actual: "Graphik 12pt",  expected: "Graphik ≥10pt", verdict: "pass" },
+        { key: "layoutCheck",     label: "layout",       actual: "missing assets",expected: "all assets",    verdict: "warn" },
+      ], { headline: "missing assets —\nrebuild with MCP.", finalVerdict: "warn" });
+      logLine("warn", "QA warn — logo/photo placeholders, asks to retry with MCP on");
+    } else {
+      flagQa({ x: 4, y: 14, w: 60, h: 12 }, "Comic Sans · off-brand");
+      flagQa({ x: 4, y: 6, w: 22, h: 8 }, "blue 1f6fd6 · wrong");
+      flagQa({ x: 6, y: 50, w: 48, h: 30 }, "blue bars · wrong");
+      flagQa({ x: 70, y: 36, w: 26, h: 24 }, "callout off-brand");
+      await runTeacherGrading([
+        { key: "brandColorCheck", label: "brand colors", actual: "blue #1f6fd6", expected: "A100FF",      verdict: "fail" },
+        { key: "typographyCheck", label: "typography",   actual: "Comic Sans",    expected: "Graphik",     verdict: "fail" },
+        { key: "layoutCheck",     label: "layout",       actual: "ALL CAPS title",expected: "sentence case",verdict: "fail" },
+      ], { headline: "off-brand. don't ship.", finalVerdict: "fail" });
+      logLine("fail", "QA fail — wrong color, wrong font, ALL CAPS title");
+    }
+  } else {
+    if (qaTone !== "ok") {
+      logLine("fail", "evals OFF — broken slide shipped to client (✉ angry email)");
+    } else {
+      logLine("warn", "evals OFF — nobody verified the brand fit");
+    }
+  }
+
+  showFullDashboard(qaTone, "hero", "A");
+  await wait(800);
+  await gotoStation("start");
+  state.running = false;
+}
+
+const SCENARIOS = { A: runScenarioA };
+
+/* ═══════════════════════════════════════════════════════════════════
+ * UI WIRING
+ * ═══════════════════════════════════════════════════════════════════ */
+
+function buildSkillBuilder() {
+  const wrap = document.getElementById("sb-rules");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+  RULES.forEach(r => {
+    const row = document.createElement("label");
+    row.className = "sb-rule";
+    row.htmlFor = "sb-" + r.key;
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.id = "sb-" + r.key;
+    cb.checked = state.rules[r.key];
+    cb.addEventListener("change", () => {
+      state.rules[r.key] = cb.checked;
+      row.classList.toggle("off", !cb.checked);
+      renderSkillPanel();
+      renderSkillBuilderPreview();
+    });
+    const text = document.createElement("div");
+    text.innerHTML =
+      `<div class="sb-rule-title">${escHtml(r.label)}</div>` +
+      `<div class="sb-rule-body">${escHtml(r.body)}</div>` +
+      `<span class="sb-rule-tag">${escHtml(r.tag)}</span>`;
+    row.appendChild(cb);
+    row.appendChild(text);
+    if (!cb.checked) row.classList.add("off");
+    wrap.appendChild(row);
+  });
+  renderSkillBuilderPreview();
+
+  const dl = document.getElementById("sb-download");
+  if (dl) dl.addEventListener("click", downloadSkillMd);
+  const cp = document.getElementById("sb-copy");
+  if (cp) cp.addEventListener("click", copySkillMd);
+}
+
+function generateSkillMarkdown() {
+  const active = RULES.filter(r => state.rules[r.key]);
+  const lines = [];
+  lines.push("---");
+  lines.push("name: accenture-pptx");
+  lines.push('description: Brand-compliance rules the agent reads before assembling any Accenture-branded slide.');
+  lines.push("---");
+  lines.push("");
+  lines.push("# Accenture PPTX");
+  lines.push("");
+  if (active.length === 0) {
+    lines.push("# (no rules — agent will assemble whatever, expect off-brand output)");
+  } else {
+    lines.push("Before assembling any slide:");
+    lines.push("");
+    for (const r of active) {
+      lines.push(`- **${r.tag}** — ${r.body}`);
+    }
+  }
+  lines.push("");
+  lines.push("# Brand palette");
+  lines.push("# - #A100FF Accenture purple (dominant)");
+  lines.push("# - #460073 deep purple");
+  lines.push("# - #7500C0 mid purple");
+  lines.push("# - #F1F1EF cream / #818180 grey");
+  lines.push("# Typography: Graphik (fallback Helvetica Neue), 10pt floor");
+  return lines.join("\n");
+}
+
+function renderSkillBuilderPreview() {
+  const el = document.getElementById("sb-preview");
+  const cnt = document.getElementById("sb-preview-count");
+  if (!el) return;
+  const md = generateSkillMarkdown();
+  el.innerHTML = highlightSkillMd(md);
+  if (cnt) {
+    const n = RULES.filter(r => state.rules[r.key]).length;
+    cnt.textContent = (n === 0)
+      ? "0 rules active (agent will improvise — expect off-brand output)"
+      : (n === 1 ? "1 rule active" : n + " rules active");
+  }
+}
+
+function highlightSkillMd(md) {
+  const lines = md.split("\n");
+  return lines.map(line => {
+    const safe = escHtml(line);
+    if (/^---\s*$/.test(line)) return `<span class="com">${safe}</span>`;
+    if (/^#/.test(line))       return `<span class="h">${safe}</span>`;
+    if (/^- /.test(line)) {
+      return safe
+        .replace(/^- /, '<span class="bul">- </span>')
+        .replace(/\*\*([^*]+)\*\*/g, '<span class="key">$1</span>');
+    }
+    if (/^[a-zA-Z_][a-zA-Z0-9_]*:/.test(line)) {
+      return safe.replace(/^([a-zA-Z_][a-zA-Z0-9_]*)(:)/, '<span class="key">$1</span>$2');
+    }
+    return safe;
+  }).join("\n");
+}
+
+/* CRC-32 (IEEE 802.3 polynomial) — used by ZIP per-file checksums. */
+const CRC32_TABLE = (() => {
+  const t = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) {
+    let c = n;
+    for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+    t[n] = c >>> 0;
+  }
+  return t;
+})();
+function crc32(bytes) {
+  let c = 0xFFFFFFFF;
+  for (let i = 0; i < bytes.length; i++) c = CRC32_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+
+/* Minimal store-only ZIP writer. Files: [{name, data: Uint8Array}].
+ * Store-only (compression method 0) keeps the implementation under 60 lines —
+ * for a few KB of markdown the size penalty is negligible.
+ */
+function buildZip(files) {
+  const enc = new TextEncoder();
+  const localParts = [];
+  const central = [];
+  let offset = 0;
+  for (const f of files) {
+    const nameBytes = enc.encode(f.name);
+    const data = f.data;
+    const crc = crc32(data);
+    const size = data.length;
+    // local file header (30 bytes + name + data)
+    const lfh = new Uint8Array(30 + nameBytes.length);
+    const dv = new DataView(lfh.buffer);
+    dv.setUint32(0, 0x04034b50, true);   // signature
+    dv.setUint16(4, 20, true);           // version needed
+    dv.setUint16(6, 0, true);            // flags
+    dv.setUint16(8, 0, true);            // method = store
+    dv.setUint16(10, 0, true);           // mtime
+    dv.setUint16(12, 0, true);           // mdate
+    dv.setUint32(14, crc, true);
+    dv.setUint32(18, size, true);        // compressed size
+    dv.setUint32(22, size, true);        // uncompressed size
+    dv.setUint16(26, nameBytes.length, true);
+    dv.setUint16(28, 0, true);           // extra
+    lfh.set(nameBytes, 30);
+    localParts.push(lfh, data);
+
+    // central directory record (46 bytes + name)
+    const cdr = new Uint8Array(46 + nameBytes.length);
+    const cv = new DataView(cdr.buffer);
+    cv.setUint32(0, 0x02014b50, true);   // signature
+    cv.setUint16(4, 20, true);           // version made by
+    cv.setUint16(6, 20, true);           // version needed
+    cv.setUint16(8, 0, true);            // flags
+    cv.setUint16(10, 0, true);           // method
+    cv.setUint16(12, 0, true);           // mtime
+    cv.setUint16(14, 0, true);           // mdate
+    cv.setUint32(16, crc, true);
+    cv.setUint32(20, size, true);
+    cv.setUint32(24, size, true);
+    cv.setUint16(28, nameBytes.length, true);
+    cv.setUint16(30, 0, true);           // extra len
+    cv.setUint16(32, 0, true);           // comment len
+    cv.setUint16(34, 0, true);           // disk #
+    cv.setUint16(36, 0, true);           // internal attrs
+    cv.setUint32(38, 0, true);           // external attrs
+    cv.setUint32(42, offset, true);      // local header offset
+    cdr.set(nameBytes, 46);
+    central.push(cdr);
+    offset += lfh.length + data.length;
+  }
+  const centralStart = offset;
+  let centralSize = 0;
+  for (const c of central) centralSize += c.length;
+  // end-of-central-directory record (22 bytes)
+  const eocd = new Uint8Array(22);
+  const ev = new DataView(eocd.buffer);
+  ev.setUint32(0, 0x06054b50, true);
+  ev.setUint16(8, files.length, true);
+  ev.setUint16(10, files.length, true);
+  ev.setUint32(12, centralSize, true);
+  ev.setUint32(16, centralStart, true);
+  return new Blob([...localParts, ...central, eocd], { type: "application/zip" });
+}
+
+function downloadSkillMd() {
+  const md = generateSkillMarkdown();
+  const enc = new TextEncoder();
+  const readme = [
+    "# accenture-pptx skill",
+    "",
+    "Five rule groups the agent reads before assembling any Accenture-branded slide.",
+    "",
+    "## Install (Claude Code, GitHub Copilot in VS Code)",
+    "",
+    "Drop the `accenture-pptx/` folder into one of these locations —",
+    "both Copilot and Claude Code read them:",
+    "",
+    "- **Global** (any project): `~/.claude/skills/accenture-pptx/`",
+    "- **Per-project**: `.claude/skills/accenture-pptx/` in the repo",
+    "",
+    "Then in VS Code open Copilot Chat and ask:",
+    "",
+    "> *Build me a hero slide for cloud strategy 2026.*",
+    "",
+    "The agent will load `SKILL.md` automatically.",
+    "",
+    "## What's inside",
+    "",
+    "`accenture-pptx/SKILL.md` — five rule groups you ticked in the Pixel Consultant demo.",
+    "Each group is one bullet — edit, remove, or add your own.",
+    "",
+    "Generated from https://ishalkin.github.io/pixel-consultant-agent/",
+  ].join("\n");
+  const blob = buildZip([
+    { name: "accenture-pptx/SKILL.md", data: enc.encode(md) },
+    { name: "accenture-pptx/README.md", data: enc.encode(readme) },
+  ]);
+  const url  = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "accenture-pptx-skill.zip";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function copySkillMd() {
+  const md = generateSkillMarkdown();
+  try {
+    await navigator.clipboard.writeText(md);
+    const tag = document.getElementById("sb-copied");
+    if (tag) {
+      tag.classList.add("show");
+      setTimeout(() => tag.classList.remove("show"), 1400);
+    }
+  } catch (e) {
+    console.warn("clipboard write failed:", e);
+  }
+}
+
+function attachUI() {
+  document.querySelectorAll(".scenarios button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".scenarios button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.scenario = btn.dataset.scenario;
+    });
+  });
+  document.getElementById("t-skill").addEventListener("change", e => {
+    state.skillOn = e.target.checked;
+    renderSkillPanel();
+  });
+  document.getElementById("t-mcp").addEventListener("change", e => {
+    state.mcpOn = e.target.checked;
+    renderMcpPanel();
+  });
+  document.getElementById("t-evals").addEventListener("change", e => {
+    state.evalsOn = e.target.checked;
+    renderEvalsPanel();
+  });
+  document.getElementById("btn-run").addEventListener("click", runCurrent);
+  document.getElementById("btn-reset").addEventListener("click", resetAll);
+}
+
+async function runCurrent() {
+  if (state.running) return;
+  state.running = true;
+  state.log = [];
+  renderLog();
+  const runBtn = document.getElementById("btn-run");
+  runBtn.disabled = true;
+  runBtn.textContent = "Running...";
+  try {
+    const fn = SCENARIOS[state.scenario];
+    if (fn) await fn();
+  } finally {
+    runBtn.disabled = false;
+    runBtn.textContent = "Run scenario";
+  }
+}
+
+function resetAll() {
+  state.running = false;
+  state.stepCursor = null;
+  state.bubble = null;
+  state.agent.x = STATIONS.start.x;
+  state.agent.y = STATIONS.start.y;
+  state.agent.activity = "idle";
+  state.agent.moving = false;
+  state.log = [{ kind: "info", text: "[idle] click \"Run scenario\" to start the slide build" }];
+  state.ruleStatus = {};
+  state.evalStatus = {};
+  state.toolStatus = {};
+  state.mcpOpen = false;
+  state.mcpTool = null;
+  state.chartBars = 0;
+  state.chartShown = false;
+  state.recipeCard = null;
+  state.toolbox = null;
+  state.dbScreen = null;
+  state.reportCard = null;
+  spawnTeacher();
+  hideFullDashboard();
+  hideDbTerminal();
+  renderLog();
+  renderSkillPanel();
+  renderMcpPanel();
+  renderEvalsPanel();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * BOOT
+ * ═══════════════════════════════════════════════════════════════════ */
+
+(async function init() {
+  buildSkillBuilder();
+  attachUI();
+  renderSkillPanel();
+  renderMcpPanel();
+  renderEvalsPanel();
+  spawnTeacher();
+  await loadAll();
+  requestAnimationFrame(loop);
+})();
 </script>
 </body>
 </html>

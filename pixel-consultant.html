@@ -319,8 +319,88 @@ function drawLabel(s, cx, y) {
   textCenter(s, cx, y + 1, PAL.highlight, 6);
 }
 
-clearStage();
-drawOffice();
+const agent = {
+  x: STATIONS.inbox.x,
+  y: STATIONS.inbox.y,
+  facing: "down",  // "up" | "down" | "left" | "right"
+  step: 0,         // walk cycle frame
+  thinking: false,
+};
+
+function drawAgent() {
+  const x = (agent.x | 0) - 6, y = (agent.y | 0) - 22;
+  // shadow
+  rect(x + 2, y + 22, 8, 1, PAL.floor2);
+  // body (blazer purple)
+  rect(x + 3, y + 10, 6, 8, PAL.agent);
+  // shirt collar
+  rect(x + 4, y + 10, 4, 1, PAL.white);
+  px(x + 5, y + 11, PAL.agent);
+  px(x + 6, y + 11, PAL.agent);
+  // head
+  rect(x + 4, y + 4, 4, 6, PAL.agentSkin);
+  // hair
+  rect(x + 4, y + 3, 4, 2, PAL.agentDark);
+  px(x + 3, y + 4, PAL.agentDark);
+  px(x + 8, y + 4, PAL.agentDark);
+  // eyes
+  px(x + 4, y + 7, PAL.wall);
+  px(x + 7, y + 7, PAL.wall);
+  // arms
+  rect(x + 2, y + 11, 1, 5, PAL.agent);
+  rect(x + 9, y + 11, 1, 5, PAL.agent);
+  // legs (walk cycle)
+  if (agent.step % 2 === 0) {
+    rect(x + 4, y + 18, 2, 4, PAL.agentDark);
+    rect(x + 6, y + 18, 2, 4, PAL.agentDark);
+  } else {
+    rect(x + 3, y + 18, 2, 4, PAL.agentDark);
+    rect(x + 7, y + 18, 2, 4, PAL.agentDark);
+  }
+  // thinking bubble
+  if (agent.thinking) {
+    rect(x + 11, y - 4, 8, 6, PAL.paper);
+    box(x + 11, y - 4, 8, 6, null, PAL.grey);
+    px(x + 14, y + 0, PAL.grey);
+    px(x + 13, y - 1, PAL.grey);
+    px(x + 15, y - 2, PAL.grey);
+  }
+}
+
+// Move agent toward target (px); returns Promise that resolves when reached
+async function walkTo(targetX, targetY, speed = 1.5) {
+  const SPS = 60;  // steps per second
+  while (true) {
+    const dx = targetX - agent.x;
+    const dy = targetY - agent.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist < speed) {
+      agent.x = targetX;
+      agent.y = targetY;
+      render();
+      return;
+    }
+    agent.x += (dx / dist) * speed;
+    agent.y += (dy / dist) * speed;
+    agent.facing = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
+    agent.step = (agent.step + 1) % 60;
+    render();
+    await sleep(1000 / SPS);
+  }
+}
+
+// Master render — called every frame
+function render() {
+  clearStage();
+  drawOffice();
+  drawAgent();
+  drawCallouts();   // defined later
+}
+
+// Stub callouts so render works now
+function drawCallouts() { /* filled in later tasks */ }
+
+render();
 </script>
 </body>
 </html>

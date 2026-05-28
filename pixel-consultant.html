@@ -1679,7 +1679,7 @@ function loop(t) {
  * ═══════════════════════════════════════════════════════════════════ */
 
 // Global animation speed. >1 = slower, <1 = faster. Tweak in one place.
-const TIME_SCALE = 1.6;
+const TIME_SCALE = 2.1;
 
 function wait(ms) {
   return new Promise(res => setTimeout(res, ms * TIME_SCALE));
@@ -1717,20 +1717,22 @@ function gotoStation(key) {
   return moveTo(s.x, s.y);
 }
 
+// Bubble TTL ticks against real time, but wait(ms) sleeps for ms * TIME_SCALE,
+// so bubbles must hold for the same scaled duration or they vanish mid-step.
 function say(text, ms = 2400) {
-  state.bubble = { text, x: state.agent.x, y: state.agent.y, ttl: ms, kind: "speech" };
+  state.bubble = { text, x: state.agent.x, y: state.agent.y, ttl: ms * TIME_SCALE, kind: "speech" };
   return wait(ms);
 }
 
 function teacherSay(text, ms = 2600) {
   if (!state.teacher) return wait(ms);
-  state.bubble = { text, x: state.teacher.x, y: state.teacher.y, ttl: ms, kind: "speech" };
+  state.bubble = { text, x: state.teacher.x, y: state.teacher.y, ttl: ms * TIME_SCALE, kind: "speech" };
   return wait(ms);
 }
 
 // Thought bubble — agent's internal reasoning. Cloud-shaped, blue text.
 function think(text, ms = 3000) {
-  state.bubble = { text, x: state.agent.x, y: state.agent.y, ttl: ms, kind: "thought" };
+  state.bubble = { text, x: state.agent.x, y: state.agent.y, ttl: ms * TIME_SCALE, kind: "thought" };
   return wait(ms);
 }
 

@@ -19,11 +19,11 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--cream); color: var(--fg);
     font-family: -apple-system, "Segoe UI", system-ui, sans-serif; }
-  body { min-height: 100vh; padding: 20px; }
-  .wrap { max-width: 1440px; margin: 0 auto; }
+  body { min-height: 100vh; padding: 16px; }
+  .wrap { max-width: 1680px; margin: 0 auto; }
   h1 { font-family: var(--serif); font-weight: 400; font-size: 36px; margin: 0 0 4px; }
-  .sub { color: var(--muted); font-size: 13px; margin-bottom: 18px; }
-  .layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+  .layout { display: grid; grid-template-columns: 200px 1fr; gap: 18px; }
   .rail { display: flex; flex-direction: column; gap: 14px; }
   .panel { background: #faf3ff; border: 1px solid var(--border); border-radius: 4px; padding: 14px; }
   .panel h3 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;
@@ -41,16 +41,16 @@
   .stage-wrap { background: transparent; padding: 0; }
   .stage-row {
     display: grid;
-    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
-    gap: 14px;
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+    gap: 16px;
     align-items: stretch;
   }
-  .stage-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .stage-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
   @media (max-width: 980px) {
     .stage-row { grid-template-columns: 1fr; }
   }
   canvas#stage { display: block; image-rendering: pixelated; image-rendering: crisp-edges;
-    width: 100%; height: auto; background: transparent; }
+    width: 100%; height: auto; min-height: 460px; background: transparent; }
   .log {
     background: #1a1814; color: #e8d8b8; padding: 12px;
     font-family: var(--mono); font-size: 11px; border-radius: 4px;
@@ -129,6 +129,7 @@
     box-shadow: 0 4px 16px rgba(70,0,115,0.12);
     overflow: hidden;
     font-family: 'Helvetica Neue', Arial, sans-serif; color: #0a0a0a;
+    container-type: inline-size;
   }
   .hero-slide .hs-bg {
     position: absolute; inset: 0;
@@ -140,16 +141,18 @@
   }
   .hero-slide .hs-gt {
     position: absolute; top: 4%; right: 3%;
-    font-size: 56px; font-weight: 800; color: #A100FF; line-height: 1;
+    font-size: clamp(28px, 6cqw, 64px); font-weight: 800; color: #A100FF; line-height: 1;
   }
   .hero-slide .hs-logo {
     position: absolute; top: 5%; left: 3%;
-    font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #0a0a0a;
+    font-size: clamp(14px, 2.4cqw, 26px); font-weight: 700; letter-spacing: -0.02em; color: #0a0a0a;
+    white-space: nowrap;
   }
   .hero-slide .hs-title {
-    position: absolute; top: 16%; left: 3%; right: 28%;
-    font-size: 44px; font-weight: 600; letter-spacing: -0.01em;
+    position: absolute; top: 16%; left: 3%; right: 30%;
+    font-size: clamp(22px, 4.6cqw, 52px); font-weight: 600; letter-spacing: -0.01em;
     color: #0a0a0a; line-height: 1.1;
+    overflow-wrap: break-word; hyphens: auto;
   }
   .hero-slide .hs-chart {
     position: absolute; left: 3%; bottom: 10%;
@@ -163,16 +166,18 @@
   }
   .hero-slide .hs-callout {
     position: absolute; right: 3%; top: 36%;
-    width: 26%;
+    width: 28%;
     background: #f3e6ff; border-left: 4px solid #A100FF;
-    padding: 14px 16px; border-radius: 2px;
+    padding: clamp(10px, 1.8cqw, 18px) clamp(12px, 2.2cqw, 20px);
+    border-radius: 2px;
   }
   .hero-slide .hs-callout .cnum {
-    font-size: 56px; font-weight: 700; color: #460073; line-height: 1;
-    margin-bottom: 8px;
+    font-size: clamp(28px, 5.6cqw, 64px); font-weight: 700; color: #460073; line-height: 1;
+    margin-bottom: clamp(6px, 1cqw, 12px);
   }
   .hero-slide .hs-callout .ctxt {
-    font-size: 14px; line-height: 1.35; color: #2a2a2a;
+    font-size: clamp(11px, 1.9cqw, 16px); line-height: 1.35; color: #2a2a2a;
+    overflow-wrap: break-word;
   }
   .hero-slide.no-skill .hs-bg::before { background: #1f6fd6; }
   .hero-slide.no-skill .hs-gt { display: none; }
@@ -309,7 +314,7 @@
     overflow: hidden;
     transition: border-color 200ms ease, opacity 200ms ease;
     display: flex; flex-direction: column;
-    min-height: 312px;
+    min-height: 460px;
   }
   .db-terminal.hidden { display: none; }
   .db-terminal.idle .db-term-head .live-dot { background: #5a5040; animation: none; }
@@ -382,6 +387,7 @@
     overflow: hidden;
     font-family: 'Helvetica Neue', Arial, sans-serif;
     color: #0a0a0a;
+    container-type: inline-size;
   }
   .slide-canvas .layer { position: absolute; opacity: 0; transition: opacity 280ms ease; }
   .slide-canvas .layer.on { opacity: 1; }
@@ -395,16 +401,18 @@
   }
   .slide-canvas .layer-gt {
     top: 4%; right: 4%;
-    font-size: 28px; font-weight: 800; color: #A100FF; line-height: 1;
+    font-size: clamp(20px, 5cqw, 36px); font-weight: 800; color: #A100FF; line-height: 1;
   }
   .slide-canvas .layer-logo {
     top: 5%; left: 4%;
-    font-size: 14px; font-weight: 700; letter-spacing: -0.02em; color: #0a0a0a;
+    font-size: clamp(11px, 2.5cqw, 18px); font-weight: 700; letter-spacing: -0.02em; color: #0a0a0a;
+    white-space: nowrap;
   }
   .slide-canvas .layer-title {
-    top: 18%; left: 4%; right: 30%;
-    font-size: 22px; font-weight: 600; letter-spacing: -0.01em; color: #0a0a0a;
+    top: 18%; left: 4%; right: 32%;
+    font-size: clamp(15px, 3.6cqw, 28px); font-weight: 600; letter-spacing: -0.01em; color: #0a0a0a;
     line-height: 1.15;
+    overflow-wrap: break-word; hyphens: auto;
   }
   .slide-canvas .layer-chart {
     left: 4%; bottom: 12%;
@@ -421,17 +429,18 @@
   }
   .slide-canvas .layer-callout {
     right: 4%; top: 38%;
-    width: 26%;
+    width: 28%;
     background: #f3e6ff; border-left: 3px solid #A100FF;
-    padding: 10px 12px;
+    padding: clamp(8px, 1.6cqw, 14px) clamp(10px, 2cqw, 16px);
     border-radius: 2px;
   }
   .slide-canvas .layer-callout .cnum {
-    font-size: 28px; font-weight: 700; color: #460073; line-height: 1;
-    margin-bottom: 6px;
+    font-size: clamp(20px, 4.4cqw, 36px); font-weight: 700; color: #460073; line-height: 1;
+    margin-bottom: clamp(4px, 0.8cqw, 8px);
   }
   .slide-canvas .layer-callout .ctxt {
-    font-size: 10px; line-height: 1.35; color: #2a2a2a;
+    font-size: clamp(9px, 1.6cqw, 13px); line-height: 1.35; color: #2a2a2a;
+    overflow-wrap: break-word;
   }
   /* SKILL OFF: ugly defaults */
   .slide-canvas.no-skill .layer-bg::before { background: #1f6fd6; }

@@ -93,6 +93,10 @@ button:hover { opacity: 0.85; }
 .log .line.build  { color: #ffd166; }
 .log .line.qa     { color: #4dd072; }
 .log .line.bad    { color: #ff5252; }
+@media (max-width: 800px) {
+  .layout { grid-template-columns: 1fr; }
+  canvas { max-width: 100%; height: auto; }
+}
 </style>
 </head>
 <body>

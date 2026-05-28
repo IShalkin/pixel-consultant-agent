@@ -547,6 +547,177 @@ function drawQACircle(a) {
   text(label, x + w + 2, y - 4, PAL.red, 5);
 }
 
+const toggles = {
+  skill: true,
+  mcp: true,
+  evals: true,
+};
+
+document.getElementById("t-skill").addEventListener("change", e => toggles.skill = e.target.checked);
+document.getElementById("t-mcp").addEventListener("change", e => toggles.mcp = e.target.checked);
+document.getElementById("t-evals").addEventListener("change", e => toggles.evals = e.target.checked);
+
+const logEl = document.getElementById("log");
+function log(msg, kind = "") {
+  const div = document.createElement("div");
+  div.className = "line" + (kind ? " " + kind : "");
+  div.textContent = msg;
+  logEl.appendChild(div);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+function clearLog() { logEl.innerHTML = ""; }
+
+let running = false;
+
+function reset() {
+  agent.x = STATIONS.inbox.x;
+  agent.y = STATIONS.inbox.y;
+  agent.thinking = false;
+  callouts.brief = null;
+  callouts.skill = null;
+  callouts.mcp = null;
+  slide.layers.clear();
+  slide.qaAnnotations.length = 0;
+  clearLog();
+  log("[idle] click \"Run scenario\" to start");
+  render();
+}
+
+async function runScenario() {
+  if (running) return;
+  running = true;
+  reset();
+  clearLog();
+
+  // ── 1. INBOX ──
+  log("walking to INBOX…");
+  await walkTo(STATIONS.inbox.x, STATIONS.inbox.y);
+  log("> Client e-mail: Cloud strategy, 1 slide", "brief");
+  callouts.brief = {
+    x: STATIONS.inbox.x, y: STATIONS.inbox.y,
+    lines: ["Cloud strategy", "1 hero slide", "for CFO Monday"],
+  };
+  render();
+  await sleep(1500);
+
+  // ── 2. SKILL ──
+  callouts.brief = null;
+  log("walking to SKILL…");
+  await walkTo(STATIONS.skill.x, STATIONS.skill.y);
+
+  if (toggles.skill) {
+    log("> reading accenture-pptx/SKILL.md", "skill");
+    callouts.skill = {
+      x: STATIONS.skill.x, y: STATIONS.skill.y,
+      items: [
+        { text: "Brand colors (purple A100FF)",  checked: false },
+        { text: "Typography (Graphik, 10pt fl.)",checked: false },
+        { text: "Layout margins (0.45 / 0.35)",  checked: false },
+        { text: "Slide modes (Pres / Detail)",   checked: false },
+        { text: "Editable: 1 unit = 1 shape",    checked: false },
+      ],
+    };
+    render();
+    for (let i = 0; i < callouts.skill.items.length; i++) {
+      await sleep(400);
+      callouts.skill.items[i].checked = true;
+      log("  ✓ " + callouts.skill.items[i].text, "skill");
+      render();
+    }
+    await sleep(800);
+  } else {
+    log("> SKILL OFF — agent has no brand rules", "bad");
+    agent.thinking = true;
+    render();
+    await sleep(1500);
+    agent.thinking = false;
+  }
+  callouts.skill = null;
+
+  // ── 3. MCP ──
+  log("walking to MCP…");
+  await walkTo(STATIONS.mcp.x, STATIONS.mcp.y);
+  if (toggles.mcp) {
+    log("> calling MCP servers", "mcp");
+    callouts.mcp = {
+      x: STATIONS.mcp.x, y: STATIONS.mcp.y,
+      calls: [
+        { tool: "canva.findLogo()",      status: "idle" },
+        { tool: "canva.findPhoto()",     status: "idle" },
+        { tool: "drawio.diagram()",      status: "idle" },
+      ],
+    };
+    render();
+    for (const call of callouts.mcp.calls) {
+      call.status = "calling"; render();
+      log("  → " + call.tool, "mcp");
+      await sleep(700);
+      call.status = "done"; render();
+      await sleep(200);
+    }
+    await sleep(600);
+  } else {
+    log("> MCP OFF — no asset access", "bad");
+    await sleep(1500);
+  }
+  callouts.mcp = null;
+
+  // ── 4. BUILD ──
+  log("walking to BUILD…");
+  await walkTo(STATIONS.build.x, STATIONS.build.y);
+  log("> assembling slide layer by layer", "build");
+  // Layer order. Each layer becomes "broken" when toggles missing.
+  const layerOrder = ["bg", "gt", "logo", "title", "chart", "callout"];
+  for (const layer of layerOrder) {
+    await sleep(350);
+    slide.layers.add(layer);
+    log("  + " + layer, "build");
+    render();
+  }
+  await sleep(600);
+
+  // ── 5. QA ──
+  log("walking to QA…");
+  await walkTo(STATIONS.qa.x, STATIONS.qa.y);
+  if (toggles.evals) {
+    log("> accenture-pptx-qa critic running", "qa");
+    await sleep(800);
+    // If skill or mcp off, flag violations
+    const violations = [];
+    if (!toggles.skill) {
+      violations.push({ x: SLIDE_BOX.x + 4, y: SLIDE_BOX.y + 18, w: 100, h: 18, label: "Calibri off-brand" });
+      violations.push({ x: SLIDE_BOX.x + 4, y: SLIDE_BOX.y + 40, w: 70, h: 30, label: "8pt < 10pt floor" });
+    }
+    if (!toggles.mcp) {
+      violations.push({ x: SLIDE_BOX.x + 4, y: SLIDE_BOX.y + 6, w: 18, h: 12, label: "missing logo" });
+    }
+    if (violations.length === 0) {
+      log("  ✓ all 5 rule groups pass", "qa");
+      // Green pass mark
+      text("PASS", SLIDE_BOX.x + SLIDE_BOX.w - 28, SLIDE_BOX.y + SLIDE_BOX.h - 12, PAL.green, 8);
+    } else {
+      for (const v of violations) {
+        slide.qaAnnotations.push(v);
+        log("  ✗ " + v.label, "bad");
+        render();
+        await sleep(500);
+      }
+      log("[QA] " + violations.length + " violations — needs rework", "bad");
+    }
+    render();
+  } else {
+    log("> EVALS OFF — broken slide ships", "bad");
+    await sleep(800);
+    log("[client] :( this is off-brand, please redo", "bad");
+  }
+
+  log("scenario complete", "");
+  running = false;
+}
+
+document.getElementById("btn-run").addEventListener("click", runScenario);
+document.getElementById("btn-reset").addEventListener("click", reset);
+
 render();
 </script>
 </body>

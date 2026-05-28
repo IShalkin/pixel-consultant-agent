@@ -132,15 +132,89 @@ button:hover { opacity: 0.85; }
 </div>
 <script>
 "use strict";
-// All JS will be added in subsequent tasks.
+
 const canvas = document.getElementById("stage");
 const ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false;
-ctx.fillStyle = "#241a3b";
-ctx.fillRect(0, 0, 480, 280);
-ctx.fillStyle = "#A100FF";
-ctx.font = "10px monospace";
-ctx.fillText("scaffolding ready", 10, 20);
+
+const W = 480, H = 280;
+
+// Brand-derived palette
+const PAL = {
+  floor:    "#2a1f44",
+  floor2:   "#221833",
+  wall:     "#1a1428",
+  agent:    "#A100FF",
+  agentSkin:"#f4d4b8",
+  agentDark:"#460073",
+  furniture:"#3a2960",
+  furniture2:"#241a3b",
+  highlight:"#C2A3FF",
+  white:    "#f1f1ef",
+  grey:     "#818180",
+  paper:    "#fafaf7",
+  red:      "#D32F2F",
+  green:    "#2E7D32",
+  yellow:   "#ffd166",
+  pink:     "#FF50A0",
+  brand:    "#A100FF",
+  brandD:   "#460073",
+  brandM:   "#7500C0",
+};
+
+// Single pixel
+function px(x, y, c) {
+  ctx.fillStyle = c;
+  ctx.fillRect(x | 0, y | 0, 1, 1);
+}
+
+// Filled rect
+function rect(x, y, w, h, c) {
+  ctx.fillStyle = c;
+  ctx.fillRect(x | 0, y | 0, w | 0, h | 0);
+}
+
+// Outlined rect (1px stroke)
+function box(x, y, w, h, fill, stroke) {
+  if (fill) rect(x, y, w, h, fill);
+  ctx.fillStyle = stroke;
+  ctx.fillRect(x, y, w, 1);
+  ctx.fillRect(x, y + h - 1, w, 1);
+  ctx.fillRect(x, y, 1, h);
+  ctx.fillRect(x + w - 1, y, 1, h);
+}
+
+// Tiny pixel-style text (the canvas's native text will be tiny but works)
+function text(s, x, y, c, size = 6) {
+  ctx.fillStyle = c;
+  ctx.font = `${size}px "SF Mono", Menlo, monospace`;
+  ctx.textBaseline = "top";
+  ctx.fillText(s, x | 0, y | 0);
+}
+
+// Center a string in a box
+function textCenter(s, cx, y, c, size = 6) {
+  ctx.fillStyle = c;
+  ctx.font = `${size}px "SF Mono", Menlo, monospace`;
+  ctx.textBaseline = "top";
+  const w = ctx.measureText(s).width;
+  ctx.fillText(s, (cx - w / 2) | 0, y | 0);
+}
+
+// Sleep helper for sequencing
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// Clear and redraw the whole frame
+function clearStage() {
+  rect(0, 0, W, H, PAL.wall);
+}
+
+// Quick sanity check
+clearStage();
+text("primitives loaded", 8, 8, PAL.white, 8);
+rect(8, 24, 60, 4, PAL.brand);
+box(80, 20, 40, 12, PAL.furniture, PAL.highlight);
+textCenter("HELLO", 100, 22, PAL.white, 6);
 </script>
 </body>
 </html>

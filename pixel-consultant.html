@@ -117,6 +117,14 @@ button:hover { opacity: 0.85; }
           <label for="t-evals">QA evals</label>
         </div>
       </div>
+      <div class="panel">
+        <h3>How to read it</h3>
+        <p style="font-size: 12px; color: var(--fg-2); line-height: 1.5;">
+          Hit <strong>Run</strong>. Watch the agent walk through 5 stations,
+          read the brand skill, call MCP servers, build a slide,
+          then pass it through QA. Toggle layers OFF to see what breaks.
+        </p>
+      </div>
     </div>
     <div>
       <div class="stage-wrap">
@@ -127,6 +135,12 @@ button:hover { opacity: 0.85; }
         <button id="btn-reset" class="ghost">Reset</button>
       </div>
       <div id="log" class="log"><div class="line">[idle] click "Run scenario" to start</div></div>
+
+      <div style="margin-top: 14px; color: var(--fg-3); font-size: 12px;">
+        Inspired by <a style="color: var(--purple);" href="https://ishalkin.github.io/czechitas-pixel-agent/">Czechitas Pixel Agent</a>.
+        Brand rules from the <code>accenture-pptx</code> skill (5 rule groups shown of ~30 total).
+        Toggle the layers to see what each one adds.
+      </div>
     </div>
   </div>
 </div>
@@ -606,6 +620,8 @@ async function runScenario() {
   running = true;
   reset();
   clearLog();
+  document.getElementById("btn-run").disabled = true;
+  document.getElementById("btn-run").style.opacity = "0.5";
 
   // ── 1. INBOX ──
   log("walking to INBOX…");
@@ -731,6 +747,8 @@ async function runScenario() {
 
   log("scenario complete", "");
   running = false;
+  document.getElementById("btn-run").disabled = false;
+  document.getElementById("btn-run").style.opacity = "1";
 }
 
 document.getElementById("btn-run").addEventListener("click", runScenario);

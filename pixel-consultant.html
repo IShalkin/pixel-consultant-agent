@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel Consultant Agent</title>
+<style>
+:root {
+  --bg:        #1a1428;
+  --panel:     #241a3b;
+  --border:    #3a2960;
+  --fg:        #f1f1ef;
+  --fg-2:      #cfcfcf;
+  --fg-3:      #818180;
+  --purple:    #A100FF;
+  --purple-d:  #460073;
+  --purple-m:  #7500C0;
+  --pink:      #FF50A0;
+  --green:     #2E7D32;
+  --red:       #D32F2F;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+.wrap { max-width: 1100px; margin: 0 auto; padding: 32px 24px 64px; }
+h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.sub { color: var(--fg-2); margin-bottom: 24px; }
+.layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
+.rail .panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.panel h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--fg-3);
+  margin-bottom: 10px;
+}
+.toggle-row { display: flex; gap: 8px; align-items: center; padding: 4px 0; font-size: 14px; }
+.stage-wrap {
+  background: #0e0820;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px;
+  display: inline-block;
+}
+canvas {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  width: 960px;
+  height: 560px;
+}
+.controls { margin-top: 12px; display: flex; gap: 10px; }
+button {
+  background: var(--purple);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 600;
+}
+button.ghost { background: transparent; color: var(--fg-2); border: 1px solid var(--border); }
+button:hover { opacity: 0.85; }
+.log {
+  margin-top: 12px;
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  color: var(--fg-2);
+  background: #0e0820;
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  border-radius: 4px;
+  height: 120px;
+  overflow-y: auto;
+}
+.log .line { margin: 2px 0; }
+.log .line.brief  { color: #FF50A0; }
+.log .line.skill  { color: #C2A3FF; }
+.log .line.mcp    { color: #5bc0eb; }
+.log .line.build  { color: #ffd166; }
+.log .line.qa     { color: #4dd072; }
+.log .line.bad    { color: #ff5252; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Pixel Consultant Agent</h1>
+  <div class="sub">How an AI agent uses a brand skill, MCP servers, and an automated reviewer to build one slide.</div>
+
+  <div class="layout">
+    <div class="rail">
+      <div class="panel">
+        <h3>Layers</h3>
+        <div class="toggle-row">
+          <input type="checkbox" id="t-skill" checked>
+          <label for="t-skill">Skill loaded</label>
+        </div>
+        <div class="toggle-row">
+          <input type="checkbox" id="t-mcp" checked>
+          <label for="t-mcp">MCP servers</label>
+        </div>
+        <div class="toggle-row">
+          <input type="checkbox" id="t-evals" checked>
+          <label for="t-evals">QA evals</label>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="stage-wrap">
+        <canvas id="stage" width="480" height="280"></canvas>
+      </div>
+      <div class="controls">
+        <button id="btn-run">Run scenario</button>
+        <button id="btn-reset" class="ghost">Reset</button>
+      </div>
+      <div id="log" class="log"><div class="line">[idle] click "Run scenario" to start</div></div>
+    </div>
+  </div>
+</div>
+<script>
+"use strict";
+// All JS will be added in subsequent tasks.
+const canvas = document.getElementById("stage");
+const ctx = canvas.getContext("2d");
+ctx.imageSmoothingEnabled = false;
+ctx.fillStyle = "#241a3b";
+ctx.fillRect(0, 0, 480, 280);
+ctx.fillStyle = "#A100FF";
+ctx.font = "10px monospace";
+ctx.fillText("scaffolding ready", 10, 20);
+</script>
+</body>
+</html>

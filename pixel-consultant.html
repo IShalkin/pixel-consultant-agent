@@ -349,8 +349,8 @@ function drawAgent() {
   // arms
   rect(x + 2, y + 11, 1, 5, PAL.agent);
   rect(x + 9, y + 11, 1, 5, PAL.agent);
-  // legs (walk cycle)
-  if (agent.step % 2 === 0) {
+  // legs (walk cycle) — flip every 8 frames for a natural gait
+  if (((agent.step / 8) | 0) % 2 === 0) {
     rect(x + 4, y + 18, 2, 4, PAL.agentDark);
     rect(x + 6, y + 18, 2, 4, PAL.agentDark);
   } else {

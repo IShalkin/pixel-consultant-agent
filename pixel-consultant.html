@@ -157,6 +157,7 @@ const PAL = {
   green:    "#2E7D32",
   yellow:   "#ffd166",
   pink:     "#FF50A0",
+  mcp:      "#5bc0eb",
   brand:    "#A100FF",
   brandD:   "#460073",
   brandM:   "#7500C0",
@@ -177,11 +178,12 @@ function rect(x, y, w, h, c) {
 // Outlined rect (1px stroke)
 function box(x, y, w, h, fill, stroke) {
   if (fill) rect(x, y, w, h, fill);
+  if (!stroke) return;
   ctx.fillStyle = stroke;
-  ctx.fillRect(x, y, w, 1);
-  ctx.fillRect(x, y + h - 1, w, 1);
-  ctx.fillRect(x, y, 1, h);
-  ctx.fillRect(x + w - 1, y, 1, h);
+  ctx.fillRect(x | 0, y | 0, w | 0, 1);
+  ctx.fillRect(x | 0, (y + h - 1) | 0, w | 0, 1);
+  ctx.fillRect(x | 0, y | 0, 1, h | 0);
+  ctx.fillRect((x + w - 1) | 0, y | 0, 1, h | 0);
 }
 
 // Tiny pixel-style text (the canvas's native text will be tiny but works)

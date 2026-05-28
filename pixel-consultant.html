@@ -1313,10 +1313,13 @@ function drawReportCard() {
   if (!state.reportCard) return;
   const card = state.reportCard;
   const s = STATIONS.board;
-  const w = 184, lh = 13, headH = 19, padTop = 4, padBot = 6;
+  const w = 232, lh = 14, headH = 19, padTop = 5, padBot = 7;
   const h = headH + padTop + card.lines.length * lh + padBot;
-  // anchor so the right edge of the card sits 6px from the canvas edge,
-  // and the card floats above the dashboard (whiteboard top sits ~y-46)
+  // Anchor against the right canvas edge. Column layout:
+  //   label   5..78
+  //   actual  82..148
+  //   expect 152..212
+  //   mark   216..w-6
   const bx = Math.round(STAGE_W - w - 6);
   const by = Math.round(s.y - h - 60);
 
@@ -1340,26 +1343,35 @@ function drawReportCard() {
   ctx.fillText("actual vs expected", bx + 76, by + 13);
 
   // column headers
-  ctx.font = "8px ui-monospace, monospace";
+  ctx.font = "7px ui-monospace, monospace";
   ctx.fillStyle = "#8a8478";
-  ctx.fillText("ACTUAL",   bx + 70, by + headH + 4);
-  ctx.fillText("EXPECTED", bx + 128, by + headH + 4);
+  ctx.fillText("ACTUAL",   bx + 82,  by + headH + 5);
+  ctx.fillText("EXPECTED", bx + 152, by + headH + 5);
+
+  // Truncate a string to fit a given pixel width at the current font.
+  const fit = (text, maxPx) => {
+    if (!text) return "—";
+    if (ctx.measureText(text).width <= maxPx) return text;
+    let s = text;
+    while (s.length > 1 && ctx.measureText(s + "…").width > maxPx) s = s.slice(0, -1);
+    return s + "…";
+  };
 
   // rows
-  ctx.font = "9px ui-monospace, monospace";
+  ctx.font = "8px ui-monospace, monospace";
   card.lines.forEach((ln, i) => {
     const ly = by + headH + padTop + i * lh + 4;
     ctx.fillStyle = "#1a1814";
-    ctx.fillText(ln.label, bx + 5, ly + 4);
+    ctx.fillText(fit(ln.label, 73), bx + 5, ly + 4);
     // actual
     let col = "#1a1814";
     if (ln.status === "fail") col = "#d4452f";
     else if (ln.status === "pass") col = "#3a7a3a";
     else if (ln.status === "skip") col = "#8a8478";
     ctx.fillStyle = col;
-    ctx.fillText(ln.actual ?? "—", bx + 70, ly + 4);
+    ctx.fillText(fit(ln.actual, 66), bx + 82, ly + 4);
     ctx.fillStyle = "#1a1814";
-    ctx.fillText(ln.expected ?? "—", bx + 128, ly + 4);
+    ctx.fillText(fit(ln.expected, 60), bx + 152, ly + 4);
     // marker on far right
     let mark = "·", mcol = "#bba";
     if (ln.status === "pass") { mark = "✓"; mcol = "#3a7a3a"; }
@@ -1367,8 +1379,8 @@ function drawReportCard() {
     else if (ln.status === "skip") { mark = "–"; mcol = "#bba"; }
     ctx.fillStyle = mcol;
     ctx.font = "bold 11px ui-monospace, monospace";
-    ctx.fillText(mark, bx + w - 12, ly + 5);
-    ctx.font = "9px ui-monospace, monospace";
+    ctx.fillText(mark, bx + w - 14, ly + 5);
+    ctx.font = "8px ui-monospace, monospace";
   });
   ctx.textAlign = "start";
 }
